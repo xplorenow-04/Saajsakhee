@@ -10,6 +10,8 @@ import LoadingSkeleton from "../../components/ecommerce/LoadingSkeleton";
 export default function Wishlist() {
   const { wishlist, wishlistLoading, fetchWishlist } = useWishlistStore();
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchWishlist();
   }, [fetchWishlist]);

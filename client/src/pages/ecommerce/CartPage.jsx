@@ -41,6 +41,8 @@ export default function CartPage() {
   const [removingItems, setRemovingItems] = useState(new Set());
   const [updatingItems, setUpdatingItems] = useState(new Set());
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);

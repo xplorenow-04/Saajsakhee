@@ -82,6 +82,8 @@ export default function Landing() {
   const user = userAuthStore((s) => s.user);
   const isAdmin = user?.role === 'admin';
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);

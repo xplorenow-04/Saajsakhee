@@ -113,6 +113,8 @@ export default function AdminOrders() {
     setLoading(false);
   }, [page, search, statusFilter]);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchOrders();
   }, [fetchOrders]);

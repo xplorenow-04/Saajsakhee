@@ -44,6 +44,8 @@ export default function ProfilePage() {
   });
   const [passwordErrors, setPasswordErrors] = useState({});
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);

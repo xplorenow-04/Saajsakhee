@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Shield, Mail, Lock, KeyRound, Zap, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -12,6 +12,8 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const authData = useContext(authContext);
   const setUser = userAuthStore((s) => s.setUser);
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   const [mode, setMode] = useState("existing");
   const [form, setForm] = useState({

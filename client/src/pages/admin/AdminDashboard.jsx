@@ -97,6 +97,8 @@ export default function AdminDashboard() {
     setRefreshing(false);
   }, []);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);

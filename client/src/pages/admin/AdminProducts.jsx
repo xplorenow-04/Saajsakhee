@@ -51,6 +51,8 @@ export default function AdminProducts() {
   const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
   const { categories, fetchCategories } = useManageCategories();
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);

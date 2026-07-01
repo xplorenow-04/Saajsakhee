@@ -75,6 +75,8 @@ export default function OrdersPage() {
     }
   };
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchOrders(page);
   }, [page]);

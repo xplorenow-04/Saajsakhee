@@ -38,6 +38,8 @@ export default function AdminUsers() {
     setLoading(false);
   }, [page, search]);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);

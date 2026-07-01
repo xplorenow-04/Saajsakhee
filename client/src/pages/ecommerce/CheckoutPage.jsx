@@ -45,6 +45,8 @@ export default function CheckoutPage() {
   const [placing, setPlacing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
 
+  useEffect(() => { window.scrollTo(0, 0); }, []);
+
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
