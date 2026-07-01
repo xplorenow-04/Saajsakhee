@@ -43,9 +43,8 @@ function Login() {
             if (response.success) {
                 authData.login(response.data)
                 setUser1(response.data)
-                socket.emit(socketEvents.USER_LOGGED_IN)
                 toast.success(`Welcome back, ${response.data.name}!`)
-                navigate(response.data?.role === 'admin' ? '/admin' : '/home')
+                navigate(response.data?.role === 'admin' ? '/admin' : '/')
             } else {
                 toast.error(response.message || 'Invalid credentials')
             }
