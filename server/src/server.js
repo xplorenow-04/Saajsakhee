@@ -69,6 +69,9 @@ app.use("/api/orders", orderRouter)
 app.use("/api/admin", adminRouter)
 app.use("/api/categories", categoryRouter)
 
+import wishlistRouter from "./routes/wishlist.route.js"
+app.use("/api/wishlist", wishlistRouter)
+
 // const PORT = process.env.PORT || 3000;
 // httpServer.listen(PORT, () => {
 //     console.log(`Server listening on port ${PORT}`);

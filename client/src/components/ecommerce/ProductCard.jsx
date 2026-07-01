@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Eye } from "lucide-react";
+import { ShoppingBag, Eye, Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useEcommerceStore } from "../../store/useEcommerceStore";
+import { useWishlistStore } from "../../store/useWishlistStore";
 import { userAuthStore } from "../../store/userStore";
 import LoadingSkeleton from "./LoadingSkeleton";
 
@@ -19,13 +20,37 @@ const formatPrice = (price) =>
 export default function ProductCard({ product, loading = false }) {
   const navigate = useNavigate();
   const { addToCart } = useEcommerceStore();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
   const user = userAuthStore((s) => s.user);
   const [selectedSize, setSelectedSize] = useState(null);
   const [adding, setAdding] = useState(false);
 
+  const inWishlist = isInWishlist(product?._id);
+
   if (loading) {
     return <LoadingSkeleton type="card" count={1} />;
   }
+
+  const handleWishlistToggle = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error("Please login to manage wishlist");
+      navigate("/login");
+      return;
+    }
+    try {
+      if (inWishlist) {
+        await removeFromWishlist(product._id);
+        toast.success("Removed from wishlist");
+      } else {
+        await addToWishlist(product._id);
+        toast.success("Added to wishlist");
+      }
+    } catch (error) {
+      toast.error("Failed to update wishlist");
+    }
+  };
 
   const {
     _id,
@@ -99,6 +124,18 @@ export default function ProductCard({ product, loading = false }) {
           >
             <ShoppingBag size={18} strokeWidth={2.5} />
           </button>
+          
+          <button
+            onClick={handleWishlistToggle}
+            className={`p-3 rounded-full transition-all duration-200 shadow-lg active:scale-95 border ${
+              inWishlist 
+                ? "bg-gold-500/20 border-gold-500 text-gold-400" 
+                : "bg-surface-800/80 backdrop-blur-sm border-surface-600 text-gold-400 hover:bg-surface-700"
+            }`}
+          >
+            <Heart size={18} className={inWishlist ? "fill-gold-400" : ""} />
+          </button>
+
           <div className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
             <Eye size={18} />
           </div>

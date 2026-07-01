@@ -16,6 +16,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useEcommerceStore } from "../../store/useEcommerceStore";
+import { useWishlistStore } from "../../store/useWishlistStore";
 import { userAuthStore } from "../../store/userStore";
 import { productApi } from "../../api/product.api";
 
@@ -29,6 +30,7 @@ export default function Navbar() {
   const user = userAuthStore((s) => s.user);
   const logout = userAuthStore((s) => s.logout);
   const { cartCount, fetchCart } = useEcommerceStore();
+  const { wishlist, fetchWishlist } = useWishlistStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -83,8 +85,11 @@ export default function Navbar() {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (user) fetchCart();
-  }, [user, fetchCart]);
+    if (user) {
+      fetchCart();
+      fetchWishlist();
+    }
+  }, [user, fetchCart, fetchWishlist]);
 
   useEffect(() => {
     productApi.getCategories().then((res) => {
@@ -229,6 +234,11 @@ export default function Navbar() {
                 className="relative p-2 text-text-secondary hover:text-accent transition-colors rounded-lg hover:bg-surface-700/50"
               >
                 <Heart size={20} />
+                {wishlist && wishlist.items && wishlist.items.length > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-danger text-white text-[10px] font-bold leading-none min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1">
+                    {wishlist.items.length > 99 ? "99+" : wishlist.items.length}
+                  </span>
+                )}
               </button>
             }
 
@@ -277,14 +287,7 @@ export default function Navbar() {
                           Admin Dashboard
                         </Link>
                       )}
-                      <Link
-                        to="/orders"
-                        onClick={closeAll}
-                        className="flex items-center gap-3 px-5 py-2.5 text-sm text-text-secondary hover:text-accent hover:bg-surface-700/50 transition-colors"
-                      >
-                        <Package size={16} />
-                        Orders
-                      </Link>
+
                       <Link
                         to="/profile"
                         onClick={closeAll}

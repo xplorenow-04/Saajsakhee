@@ -18,6 +18,7 @@ import CartPage from './pages/ecommerce/CartPage.jsx'
 import CheckoutPage from './pages/ecommerce/CheckoutPage.jsx'
 import OrdersPage from './pages/ecommerce/OrdersPage.jsx'
 import ProfilePage from './pages/ecommerce/ProfilePage.jsx'
+import Wishlist from './pages/ecommerce/Wishlist.jsx'
 
 import AdminLayout from './components/admin/AdminLayout.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
@@ -67,6 +68,7 @@ function App() {
         <Route path='/shop' element={<ProductListing />} />
         <Route path='/shop/:slug' element={<ProductDetail />} />
         <Route path='/cart' element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+        <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/checkout' element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
         <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

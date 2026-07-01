@@ -20,6 +20,7 @@ import {
 import toast from "react-hot-toast";
 import { productApi } from "../../api/product.api";
 import { useEcommerceStore } from "../../store/useEcommerceStore";
+import { useWishlistStore } from "../../store/useWishlistStore";
 import { userAuthStore } from "../../store/userStore";
 import Navbar from "../../components/ecommerce/Navbar";
 import Footer from "../../components/ecommerce/Footer";
@@ -56,6 +57,7 @@ export default function ProductDetail() {
   const user = userAuthStore((s) => s.user);
   const { slug } = useParams();
   const { addToCart } = useEcommerceStore();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
 
   const [product, setProduct] = useState(null);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
@@ -118,6 +120,25 @@ export default function ProductDetail() {
       toast.error("Something went wrong");
     } finally {
       setAddingToCart(false);
+    }
+  };
+
+  const handleWishlistToggle = async () => {
+    if (!user) {
+      toast.error("Please login to manage wishlist");
+      navigate("/login");
+      return;
+    }
+    try {
+      if (isInWishlist(product._id)) {
+        await removeFromWishlist(product._id);
+        toast.success("Removed from wishlist");
+      } else {
+        await addToWishlist(product._id);
+        toast.success("Added to wishlist");
+      }
+    } catch (error) {
+      toast.error("Failed to update wishlist");
     }
   };
 
@@ -240,8 +261,15 @@ export default function ProductDetail() {
                   </div>
                 )}
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
-                  <button className="w-10 h-10 rounded-full bg-surface-900/70 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-accent hover:bg-surface-900 transition-all">
-                    <Heart size={18} />
+                  <button 
+                    onClick={handleWishlistToggle}
+                    className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
+                      isInWishlist(product._id) 
+                        ? "bg-gold-500/20 text-gold-400" 
+                        : "bg-surface-900/70 text-text-muted hover:text-accent hover:bg-surface-900"
+                    }`}
+                  >
+                    <Heart size={18} className={isInWishlist(product._id) ? "fill-gold-400" : ""} />
                   </button>
                   <button className="w-10 h-10 rounded-full bg-surface-900/70 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-accent hover:bg-surface-900 transition-all">
                     <Share2 size={18} />
