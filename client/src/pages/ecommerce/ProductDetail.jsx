@@ -70,6 +70,10 @@ export default function ProductDetail() {
   const [openAccordion, setOpenAccordion] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     if (!slug) return;
     const fetchProduct = async () => {
       setLoading(true);

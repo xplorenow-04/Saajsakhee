@@ -107,6 +107,10 @@ export default function ProductListing() {
     currentDiscount;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     setSearchInput(currentSearch);
   }, [currentSearch]);
 
