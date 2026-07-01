@@ -2,7 +2,6 @@ import React, { useEffect } from 'react'
 import { Routes, Route } from "react-router-dom"
 import Register from './pages/auth/Register.jsx'
 import Login from './pages/auth/Login.jsx'
-import Home from './pages/user/Home.jsx'
 import { useContext } from 'react'
 import { authContext } from './context/AuthProvider.jsx'
 import { userApi } from './api/user.api.js'
@@ -10,8 +9,6 @@ import { userAuthStore } from './store/userStore.js'
 import ProtectedRoute from './components/guards/ProtectedRoute.jsx'
 import ProtectedRouteAuth from './components/guards/ProtectedRouteAuth.jsx'
 import AdminRoute from './components/guards/AdminRoute.jsx'
-import Chat from "./pages/user/Chat.jsx"
-import GroupInfoMain from './pages/user/GroupInfoMain.jsx'
 import { Toaster } from 'react-hot-toast'
 
 import Landing from './pages/ecommerce/Landing.jsx'
@@ -58,7 +55,7 @@ function App() {
       }} />
       <Routes>
         <Route path='/beep' element={<button onClick={() => {
-          const audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
           const oscillator = audioCtx.createOscillator();
           oscillator.type = "sine";
           oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
@@ -76,9 +73,6 @@ function App() {
 
         <Route path='/login' element={<ProtectedRouteAuth><Login /></ProtectedRouteAuth>} />
         <Route path='/register' element={<ProtectedRouteAuth><Register /></ProtectedRouteAuth>} />
-        <Route path='/home' element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path='/chat/:id' element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-        <Route path='/chat/group-info/:id' element={<ProtectedRoute><GroupInfoMain /></ProtectedRoute>} />
 
         <Route path='/admin' element={<AdminRoute><AdminLayout /></AdminRoute>}>
           <Route index element={<AdminDashboard />} />

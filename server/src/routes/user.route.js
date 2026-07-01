@@ -20,7 +20,6 @@ import {
     getAllUsers,
     authMe,
     searchUsers,
-    getOnlinePartners
 
 } from '../controllers/user.controller.js';
 import { sendVerificationToken } from '../services/sendVerificationToken.js';
@@ -31,7 +30,7 @@ const router = Router();
 
 router.route("/register").post(registerUser, sendVerificationToken)
 router.route("/auth-me").get(authMe)
-router.route("/chat-partners").get(userAuth, getOnlinePartners)
+// router.route("/chat-partners").get(userAuth, getOnlinePartners)
 router.route("/login").post(loginUser)
 router.route("/logout").get(userAuth, logoutUser)
 router.route("/avatar").post(userAuth, upload.single("avatar"), uploadAvatar)

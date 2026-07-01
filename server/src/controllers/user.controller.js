@@ -9,10 +9,7 @@ import { generateTokens } from "../services/generateTokens.js";
 import { deleteFileFromCloudinary, uploadFileOnCloudinary } from "../services/cloudinary.service.js";
 import { generateOTP } from "../services/generateOTP.js";
 import { sendEmail } from "../services/brevoMail.service.js";
-import { getUserChatPartners } from "../sockets/utils/getUserChatPartners.js";
-import { getIO } from "../sockets/socketInstance.js";
-import { socketEvents } from "../constants/socketEvents.js";
-import { getUserSocket } from "../sockets/soketsMap.js";
+
 
 dotenv.config({ path: "./.env" })
 
@@ -1028,25 +1025,6 @@ const searchUsers = asyncHandler(async (req, res) => {
 
 })
 
-const getOnlinePartners = asyncHandler(async (req, res) => {
-
-  const partners = await getUserChatPartners(req.user._id)
-
-  let onlineUsers = []
-
-  for (let partner of partners) {
-    if (getUserSocket(partner.toString())) {
-      onlineUsers.push(partner.toString())
-    }
-  }
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, onlineUsers, "Online Users Fetched Successfully.")
-    )
-
-})
 
 export {
   registerUser,
@@ -1068,5 +1046,4 @@ export {
   getAllUsers,
   authMe,
   searchUsers,
-  getOnlinePartners
 }

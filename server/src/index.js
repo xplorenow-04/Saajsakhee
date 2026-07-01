@@ -1,6 +1,5 @@
 import connectDB from "./db/db.js"
 import { httpServer } from "./server.js";
-import { initializeSocket } from "./sockets/index.js";
 import { redis } from "./redis/config.js";
 // import { generateInterviewReport } from "./services/ai.service.js";
 

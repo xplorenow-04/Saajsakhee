@@ -222,12 +222,15 @@ export default function Navbar() {
 
           {/* Icons */}
           <div className="flex items-center gap-3 lg:gap-4">
-            <button
-              onClick={() => navigate("/wishlist")}
-              className="relative p-2 text-text-secondary hover:text-accent transition-colors rounded-lg hover:bg-surface-700/50"
-            >
-              <Heart size={20} />
-            </button>
+
+            {
+              user?.role !== "admin" && <button
+                onClick={() => navigate("/wishlist")}
+                className="relative p-2 text-text-secondary hover:text-accent transition-colors rounded-lg hover:bg-surface-700/50"
+              >
+                <Heart size={20} />
+              </button>
+            }
 
             {
               user?.role !== "admin" && <button
