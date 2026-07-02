@@ -182,10 +182,9 @@ export default function ProfilePage() {
   }
 
   const inputClass = (hasError) =>
-    `w-full bg-surface-700 border rounded-xl pl-10 pr-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 transition-all ${
-      hasError
-        ? "border-danger focus:border-danger focus:ring-danger/30"
-        : "border-surface-600 focus:border-accent focus:ring-accent/30"
+    `w-full bg-surface-700 border rounded-xl pl-10 pr-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 transition-all ${hasError
+      ? "border-danger focus:border-danger focus:ring-danger/30"
+      : "border-surface-600 focus:border-accent focus:ring-accent/30"
     }`;
 
   return (

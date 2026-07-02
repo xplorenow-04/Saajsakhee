@@ -72,7 +72,7 @@ function App() {
         <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/checkout' element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-        <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        {/* <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> */}
 
         <Route path='/login' element={<ProtectedRouteAuth><Login /></ProtectedRouteAuth>} />
         <Route path='/register' element={<ProtectedRouteAuth><Register /></ProtectedRouteAuth>} />
