@@ -8,7 +8,8 @@ import {
   LogOut,
   ChevronLeft,
   X,
-  Tags
+  Tags,
+  Settings2
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { userApi } from "../../api/user.api";
@@ -19,7 +20,8 @@ const navItems = [
   { name: "Products", path: "/admin/products", icon: Package },
   { name: "Categories", path: "/admin/categories", icon: Tags },
   { name: "Orders", path: "/admin/orders", icon: ShoppingCart },
-  { name: "Users", path: "/admin/users", icon: Users },
+  { name: "Customers", path: "/admin/users", icon: Users },
+  { name: "Settings", path: "/admin/settings", icon: Settings2 },
 ];
 
 export default function AdminSidebar({ mobileOpen, setMobileOpen }) {

@@ -26,6 +26,7 @@ import AdminProducts from './pages/admin/AdminProducts.jsx'
 import AdminOrders from './pages/admin/AdminOrders.jsx'
 import AdminUsers from './pages/admin/AdminUsers.jsx'
 import AdminCategories from './pages/admin/AdminCategories.jsx'
+import AdminSettings from './pages/admin/AdminSettings.jsx'
 
 function App() {
   const context = useContext(authContext);
@@ -71,7 +72,7 @@ function App() {
         <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/checkout' element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
-        <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        {/* <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> */}
 
         <Route path='/login' element={<ProtectedRouteAuth><Login /></ProtectedRouteAuth>} />
         <Route path='/register' element={<ProtectedRouteAuth><Register /></ProtectedRouteAuth>} />
@@ -82,6 +83,7 @@ function App() {
           <Route path='categories' element={<AdminCategories />} />
           <Route path='orders' element={<AdminOrders />} />
           <Route path='users' element={<AdminUsers />} />
+          <Route path='settings' element={<AdminSettings />} />
         </Route>
       </Routes>
     </>

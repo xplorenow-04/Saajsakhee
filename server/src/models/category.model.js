@@ -29,6 +29,11 @@ const categorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
+    },
+    parent: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+        default: null
     }
 }, { timestamps: true });
 
@@ -48,3 +53,4 @@ categorySchema.set("toJSON", { virtuals: true });
 categorySchema.set("toObject", { virtuals: true });
 
 export const Category = mongoose.model("Category", categorySchema);
+

@@ -289,14 +289,17 @@ export default function Navbar() {
                         </Link>
                       )}
 
-                      <Link
-                        to="/profile"
-                        onClick={closeAll}
-                        className="flex items-center gap-3 px-5 py-2.5 text-sm text-text-secondary hover:text-accent hover:bg-surface-700/50 transition-colors"
-                      >
-                        <Settings size={16} />
-                        Profile Settings
-                      </Link>
+                      {/* {
+                        user?.role !== "admin" &&
+                        <Link
+                          to="/profile"
+                          onClick={closeAll}
+                          className="flex items-center gap-3 px-5 py-2.5 text-sm text-text-secondary hover:text-accent hover:bg-surface-700/50 transition-colors"
+                        >
+                          <Settings size={16} />
+                          Profile Settings
+                        </Link>
+                      } */}
                       <div className="border-t border-surface-600 mt-1 pt-1">
                         <button
                           onClick={() => { logout(); closeAll(); }}

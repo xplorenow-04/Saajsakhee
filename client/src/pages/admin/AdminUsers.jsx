@@ -70,8 +70,8 @@ export default function AdminUsers() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Users</h1>
-        <p className="text-sm text-text-muted mt-0.5">Manage registered users</p>
+        <h1 className="text-2xl font-bold text-text-primary">Customers</h1>
+        <p className="text-sm text-text-muted mt-0.5">Manage registered customers</p>
       </div>
 
       <div className="relative max-w-xs">

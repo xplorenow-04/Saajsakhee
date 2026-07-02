@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingBag, Eye, Heart } from "lucide-react";
+import { ShoppingBag, Eye, Heart, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useEcommerceStore } from "../../store/useEcommerceStore";
 import { useWishlistStore } from "../../store/useWishlistStore";
@@ -91,6 +91,30 @@ export default function ProductCard({ product, loading = false }) {
     }
   };
 
+  const handleShare = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const url = `${window.location.origin}/shop/${slug || _id}`;
+    const title = name || "Product";
+    const text = `Check out ${title} on Saajsakhee!`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+    
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+    }
+  };
+
   return (
     <Link
       to={`/shop/${slug || _id}`}
@@ -139,6 +163,14 @@ export default function ProductCard({ product, loading = false }) {
           <div className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
             <Eye size={18} />
           </div>
+
+          <button
+            onClick={handleShare}
+            className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer active:scale-95"
+            title="Share Product"
+          >
+            <Share2 size={18} />
+          </button>
         </div>
 
         {/* Category Tag */}

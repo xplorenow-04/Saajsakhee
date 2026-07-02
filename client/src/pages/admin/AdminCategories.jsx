@@ -6,7 +6,8 @@ import {
   X,
   Loader2,
   Search,
-  Image
+  Image,
+  ChevronRight
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useManageCategories } from "../../hooks/useCategories";
@@ -16,7 +17,7 @@ export default function AdminCategories() {
   const [search, setSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState({ name: "", description: "" });
+  const [form, setForm] = useState({ name: "", description: "", parentId: "" });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -28,12 +29,15 @@ export default function AdminCategories() {
     fetchCategories();
   }, []);
 
+  // Root categories only (no parent) — available as parent options
+  const rootCategories = categories.filter(c => !c.parent);
+
   const filtered = categories.filter(c =>
     c.name?.toLowerCase().includes(search.toLowerCase())
   );
 
   const resetForm = () => {
-    setForm({ name: "", description: "" });
+    setForm({ name: "", description: "", parentId: "" });
     setImageFile(null);
     setImagePreview(null);
     setEditingId(null);
@@ -45,7 +49,11 @@ export default function AdminCategories() {
   };
 
   const openEdit = (category) => {
-    setForm({ name: category.name, description: category.description || "" });
+    setForm({
+      name: category.name,
+      description: category.description || "",
+      parentId: category.parent?._id || category.parent || ""
+    });
     setImagePreview(category.image?.url || null);
     setImageFile(null);
     setEditingId(category._id);
@@ -77,6 +85,7 @@ export default function AdminCategories() {
       toast.success(editingId ? "Category updated" : "Category created");
       setModalOpen(false);
       resetForm();
+      fetchCategories();
     } else {
       toast.error(res.message || "Failed to save category");
     }
@@ -94,11 +103,11 @@ export default function AdminCategories() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Categories</h1>
-          <p className="text-sm text-text-muted mt-0.5">Manage product categories</p>
+          <p className="text-sm text-text-muted mt-0.5">Manage product categories &amp; subcategories</p>
         </div>
         <button
           onClick={openCreate}
@@ -142,7 +151,7 @@ export default function AdminCategories() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-surface-600">
-                  {["Image", "Name", "Slug", "Description", "Status", "Actions"].map((h) => (
+                  {["Image", "Name", "Parent", "Slug", "Status", "Actions"].map((h) => (
                     <th
                       key={h}
                       className="text-left text-xs font-semibold text-text-muted uppercase tracking-wider px-4 py-3"
@@ -165,15 +174,24 @@ export default function AdminCategories() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <p className="text-sm font-medium text-text-primary">{category.name}</p>
+                      <div className="flex items-center gap-1.5">
+                        {category.parent && (
+                          <ChevronRight size={12} className="text-gold-500/60 shrink-0" />
+                        )}
+                        <p className="text-sm font-medium text-text-primary">{category.name}</p>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      {category.parent ? (
+                        <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gold-500/10 text-gold-400">
+                          {category.parent.name}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-text-muted">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <span className="text-xs font-mono text-text-muted">{category.slug}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm text-text-secondary truncate max-w-[200px] block">
-                        {category.description || "--"}
-                      </span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${category.isActive
@@ -236,7 +254,7 @@ export default function AdminCategories() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => { setModalOpen(false); resetForm(); }} />
-          <div className="relative bg-surface-800 border border-surface-600 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+          <div className="relative bg-surface-800 border border-surface-600 rounded-2xl p-6 w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-text-primary">
                 {editingId ? "Edit Category" : "Add Category"}
@@ -251,19 +269,37 @@ export default function AdminCategories() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">Name</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))}
-                    className="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500/30 transition-all"
-                    placeholder="Category name"
-                  />
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">Name <span className="text-danger">*</span></label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm(p => ({ ...p, name: e.target.value }))}
+                  className="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500/30 transition-all"
+                  placeholder="Category name"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                  Parent Category <span className="text-text-muted text-xs font-normal">(optional — leave empty for root category)</span>
+                </label>
+                <select
+                  value={form.parentId}
+                  onChange={(e) => setForm(p => ({ ...p, parentId: e.target.value }))}
+                  className="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-text-primary focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500/30 transition-all"
+                >
+                  <option value="">— None (Root Category) —</option>
+                  {rootCategories
+                    .filter(c => c._id !== editingId)
+                    .map(c => (
+                      <option key={c._id} value={c._id}>{c.name}</option>
+                    ))}
+                </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-text-secondary mb-1.5">Description (optional)</label>
-                 <textarea
+                <textarea
                   value={form.description}
                   onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))}
                   rows={3}

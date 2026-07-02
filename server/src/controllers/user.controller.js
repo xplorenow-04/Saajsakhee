@@ -29,7 +29,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     username,
     name,
     email,
-    password
+    password,
+    phone
   } = req.body
 
   if ([username, name, email, password].some((field) => (!field || field.trim() === ""))) {
@@ -38,6 +39,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
 
   if (password.length < 8) {
     throw new ApiError(400, "Password must be atleast 8 charachers long.")
+  }
+
+  if (phone && phone.trim() !== "" && !/^[0-9]{10}$/.test(phone.trim())) {
+    throw new ApiError(400, "Phone number must be a valid 10-digit number.")
   }
 
   const alreadyExists = await User.findOne({ email });
@@ -59,6 +64,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     name,
     email,
     password,
+    phone: phone ? phone.trim() : "",
     avtar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`
   })
 
@@ -98,6 +104,12 @@ const loginUser = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(400, [], "Acoount not found!", false)
       )
+  }
+
+  if (user.isDisabled) {
+    return res.status(200).json(
+      new ApiResponse(403, [], "Your account has been disabled. Please contact support.", false)
+    )
   }
 
   // if(user.isVerified === false){

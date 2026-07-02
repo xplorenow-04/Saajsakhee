@@ -146,6 +146,37 @@ export default function ProductDetail() {
     }
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = product.name;
+    const text = `Check out ${product.name} on Saajsakhee!`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        });
+        return; // Successfully shared using native dialog
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+           // User didn't just cancel, so fallback to copy
+        } else {
+           return;
+        }
+      }
+    }
+    
+    // Fallback: Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Link copied to clipboard!");
+    } catch (err) {
+      toast.error("Failed to copy link");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-900">
@@ -275,7 +306,11 @@ export default function ProductDetail() {
                   >
                     <Heart size={18} className={isInWishlist(product._id) ? "fill-gold-400" : ""} />
                   </button>
-                  <button className="w-10 h-10 rounded-full bg-surface-900/70 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-accent hover:bg-surface-900 transition-all">
+                  <button 
+                    onClick={handleShare}
+                    className="w-10 h-10 rounded-full bg-surface-900/70 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-accent hover:bg-surface-900 transition-all"
+                    title="Share Product"
+                  >
                     <Share2 size={18} />
                   </button>
                 </div>
