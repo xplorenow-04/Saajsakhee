@@ -23,15 +23,16 @@ import { useShippingSettings } from "../../hooks/useShippingSettings";
 
 
 const bgImages = [
-  "https://img.magnific.com/free-photo/stylish-happy-girl-shopping-portrait-modern-woman-with-shop-bag-laughing-smiling-satisfied_1258-119361.jpg?semt=ais_hybrid&w=740&q=80",
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782993691/ChatGPT_Image_Jul_2_2026_05_31_04_PM_pb3xnv.png",
 
-  "https://img.magnific.com/free-photo/young-woman-with-shopping-bags-beautiful-dress_1303-17550.jpg?semt=ais_hybrid&w=740&q=80",
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782994054/ChatGPT_Image_Jul_2_2026_05_36_16_PM_jyavyc.png",
 
-  "https://static.vecteezy.com/system/resources/thumbnails/059/967/906/small_2x/stunning-woman-in-traditional-indian-dress-free-photo.jpeg",
+  // "https://res.cloudinary.com/drftighpf/image/upload/v1782994183/ChatGPT_Image_Jul_2_2026_05_39_23_PM_qe3imr.png",
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782995700/ChatGPT_Image_Jul_2_2026_06_04_23_PM_fokuu5.png",
 
-  "https://static.vecteezy.com/system/resources/thumbnails/057/184/608/small/elegant-woman-in-orange-traditional-dress-at-palace-photo.jpg",
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782994438/ChatGPT_Image_Jul_2_2026_05_43_40_PM_dospsm.png",
 
-  ""
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782994525/ChatGPT_Image_Jul_2_2026_05_45_15_PM_spa0s0.png"
 
 ];
 // const bgImages = [
@@ -40,6 +41,25 @@ const bgImages = [
 //   "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1920&q=80",
 //   "https://images.unsplash.com/photo-1556909172-54557c2e4fb7?auto=format&fit=crop&w=1920&q=80",
 // ];
+
+// Vertical focal point for the hero slideshow images, expressed as a
+// background-position percentage. 0% = hard top, 50% = dead center.
+// Lowering this pulls the visible "window" upward so faces near the
+// top of tall portrait images don't get cropped off by bg-cover.
+// Tune per-image if some models are framed higher/lower than others —
+// just swap this constant for a lookup keyed by index.
+const HERO_FOCAL_Y = "15%";
+
+// How long each hero background image stays on screen before crossfading
+// to the next one. This was previously firing every 1000ms, which meant
+// each slide barely finished fading in before the next one started and
+// the Ken Burns zoom (a 9s animation) never had time to actually read as
+// a "zoom" — it just visibly snapped. 6s gives each image room to fade
+// in, hold, and start zooming before the next crossfade begins.
+const SLIDE_DURATION_MS = 6000;
+// Crossfade length between slides. Longer than the old 700ms so the
+// transition itself feels deliberate instead of abrupt.
+const CROSSFADE_MS = 1400;
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
@@ -123,7 +143,7 @@ export default function Landing() {
   useEffect(() => {
     const timer = setInterval(() => {
       setBgIndex((prev) => (prev + 1) % bgImages.length);
-    }, 1000);
+    }, SLIDE_DURATION_MS);
     return () => clearInterval(timer);
   }, []);
 
@@ -137,19 +157,21 @@ export default function Landing() {
 
     if (typePhase === "typing") {
       if (typedLength < fullText.length) {
-        timeout = setTimeout(() => setTypedLength((l) => l + 1), 40);
+        timeout = setTimeout(() => setTypedLength((l) => l + 1), 60);
       } else {
         // Full line typed — hold it on screen before erasing.
-        timeout = setTimeout(() => setTypePhase("deleting"), 1000);
+        timeout = setTimeout(() => setTypePhase("deleting"), 2000);
       }
     } else {
       if (typedLength > 0) {
-        timeout = setTimeout(() => setTypedLength((l) => l - 1), 28);
+        // Deleting a touch faster than typing reads as natural, but not
+        // so fast it feels like a glitch next to the slower background.
+        timeout = setTimeout(() => setTypedLength((l) => l - 1), 32);
       } else {
         timeout = setTimeout(() => {
           setHeadlineIndex((i) => (i + 1) % heroHeadlines.length);
           setTypePhase("typing");
-        }, 400);
+        }, 500);
       }
     }
 
@@ -166,7 +188,7 @@ export default function Landing() {
   // Sync a soft glow/lift pulse on the hero copy with every slide change.
   useEffect(() => {
     setBgPulse(true);
-    const t = setTimeout(() => setBgPulse(false), 650);
+    const t = setTimeout(() => setBgPulse(false), CROSSFADE_MS);
     return () => clearTimeout(t);
   }, [bgIndex]);
 
@@ -243,7 +265,17 @@ export default function Landing() {
           animation: floatGlow 10s ease-in-out infinite;
         }
         .hero-bg-active {
-          animation: kenBurns 9s ease-out forwards;
+          /* Duration = SLIDE_DURATION_MS + CROSSFADE_MS (6000 + 1400 = 7400ms)
+             so the zoom runs for the full time a slide is visible on screen,
+             including its fade-in, instead of restarting mid-zoom every
+             second like it did before. */
+          animation: kenBurns 7.4s ease-out forwards;
+          /* Match this to HERO_FOCAL_Y below so the zoom expands from the
+             same point we're anchoring the crop to — otherwise the Ken
+             Burns scale (which defaults to center-origin) drifts back
+             toward the middle over time and re-crops the face. */
+          transform-origin: center 15%;
+          will-change: transform;
         }
         @media (prefers-reduced-motion: reduce) {
           .hero-badge, .hero-heading, .hero-desc, .hero-cta,
@@ -323,10 +355,16 @@ export default function Landing() {
             {bgImages.map((url, idx) => (
               <div
                 key={idx}
-                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${idx === bgIndex ? "hero-bg-active" : ""
+                className={`absolute inset-0 bg-cover transition-opacity duration-700 ${idx === bgIndex ? "hero-bg-active" : ""
                   }`}
                 style={{
                   backgroundImage: `url(${url})`,
+                  // Anchored toward the top instead of dead-center so tall
+                  // hero crops don't cut off the model's face. Tweak
+                  // HERO_FOCAL_Y above (and the matching .hero-bg-active
+                  // transform-origin) if any individual image still crops
+                  // wrong.
+                  backgroundPosition: `center ${HERO_FOCAL_Y}`,
                   opacity: idx === bgIndex ? 1 : 0,
                   transform: idx === bgIndex ? undefined : 'scale(1.06)',
                 }}
