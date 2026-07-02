@@ -60,14 +60,9 @@ export default function Landing() {
       desc: `On orders above ₹${settings?.freeShippingThreshold || 0}`,
     },
     {
-      icon: ShieldCheck,
-      title: "Secure Payment",
-      desc: "100% secure transactions",
-    },
-    {
       icon: RefreshCw,
-      title: "Easy Returns",
-      desc: "30-day return policy",
+      title: "Exchange Available",
+      desc: "No refund, only exchange",
     },
     {
       icon: Sparkles,
