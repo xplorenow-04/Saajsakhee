@@ -71,12 +71,30 @@ export default function Landing() {
     },
   ];
 
+  // Rotating hero headlines — women's fashion / traditional-wear themed.
+  // Each entry is { line1, line2 } where line2 renders in the gold gradient.
+  const heroHeadlines = [
+    { line1: "Celebrate Grace,", line2: "Wear Tradition" },
+    { line1: "Timeless Elegance,", line2: "Modern Grace" },
+    { line1: "Drape Heritage,", line2: "Redefine Style" },
+  ];
+
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [bgIndex, setBgIndex] = useState(0);
+  // Typewriter effect state for the rotating hero headline: how many
+  // characters of the current line are visible, and whether we're
+  // currently typing forward or deleting backward.
+  const [headlineIndex, setHeadlineIndex] = useState(0);
+  const [typedLength, setTypedLength] = useState(0);
+  const [typePhase, setTypePhase] = useState("typing"); // "typing" | "deleting"
+  // Brief highlight pulse fired on every background transition so the
+  // headline/description feel synchronized with the slideshow instead of
+  // sitting static on top of it.
+  const [bgPulse, setBgPulse] = useState(false);
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
@@ -109,12 +127,48 @@ export default function Landing() {
     return () => clearInterval(timer);
   }, []);
 
+  // Typewriter effect: types out the current headline, pauses, deletes it,
+  // then moves to the next headline and types that one — a continuous
+  // type → pause → erase → type loop rather than an instant text swap.
+  useEffect(() => {
+    const current = heroHeadlines[headlineIndex];
+    const fullText = `${current.line1} ${current.line2}`;
+    let timeout;
+
+    if (typePhase === "typing") {
+      if (typedLength < fullText.length) {
+        timeout = setTimeout(() => setTypedLength((l) => l + 1), 40);
+      } else {
+        // Full line typed — hold it on screen before erasing.
+        timeout = setTimeout(() => setTypePhase("deleting"), 1000);
+      }
+    } else {
+      if (typedLength > 0) {
+        timeout = setTimeout(() => setTypedLength((l) => l - 1), 28);
+      } else {
+        timeout = setTimeout(() => {
+          setHeadlineIndex((i) => (i + 1) % heroHeadlines.length);
+          setTypePhase("typing");
+        }, 400);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typedLength, typePhase, headlineIndex]);
+
   useEffect(() => {
     bgImages.forEach((url) => {
       const img = new Image();
       img.src = url;
     });
   }, []);
+
+  // Sync a soft glow/lift pulse on the hero copy with every slide change.
+  useEffect(() => {
+    setBgPulse(true);
+    const t = setTimeout(() => setBgPulse(false), 650);
+    return () => clearTimeout(t);
+  }, [bgIndex]);
 
   const handleNewsletter = (e) => {
     e.preventDefault();
@@ -126,6 +180,86 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-surface-900">
+      {/* Hero entrance + slideshow-sync animation keyframes.
+          Kept local to this page so no shared theme files are touched. */}
+      <style>{`
+        @keyframes heroFadeUp {
+          0% { opacity: 0; transform: translateY(26px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroBadgeIn {
+          0% { opacity: 0; transform: translateY(-10px) scale(0.92); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes kenBurns {
+          0% { transform: scale(1); }
+          100% { transform: scale(1.1); }
+        }
+        @keyframes floatGlow {
+          0%, 100% { transform: translate(0, 0); }
+          50% { transform: translate(24px, -18px); }
+        }
+        @keyframes sparkleSpin {
+          0% { transform: rotate(0deg) scale(1); }
+          50% { transform: rotate(180deg) scale(1.15); }
+          100% { transform: rotate(360deg) scale(1); }
+        }
+        @keyframes caretBlink {
+          0%, 49% { opacity: 1; }
+          50%, 100% { opacity: 0; }
+        }
+        .typewriter-caret {
+          display: inline-block;
+          width: 3px;
+          margin-left: 4px;
+          background: currentColor;
+          animation: caretBlink 0.9s step-end infinite;
+          vertical-align: -0.1em;
+        }
+        .hero-badge {
+          animation: heroBadgeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+        }
+        .hero-heading {
+          animation: heroFadeUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+          transition: text-shadow 0.6s ease, transform 0.6s ease;
+        }
+        .hero-desc {
+          animation: heroFadeUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+          transition: opacity 0.6s ease;
+        }
+        .hero-cta {
+          animation: heroFadeUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.65s both;
+        }
+        .hero-pulse {
+          transform: translateY(-2px);
+        }
+        .hero-pulse .hero-heading-gradient {
+          text-shadow: 0 0 28px rgba(212, 175, 55, 0.45);
+        }
+        .hero-sparkle {
+          animation: sparkleSpin 6s linear infinite;
+        }
+        .hero-glow-float {
+          animation: floatGlow 10s ease-in-out infinite;
+        }
+        .hero-bg-active {
+          animation: kenBurns 9s ease-out forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-badge, .hero-heading, .hero-desc, .hero-cta,
+          .hero-sparkle, .hero-glow-float, .hero-bg-active {
+            animation: none !important;
+          }
+          .typewriter-caret {
+            animation: none !important;
+            opacity: 1;
+          }
+          .hero-pulse .hero-heading-gradient {
+            text-shadow: none !important;
+          }
+        }
+      `}</style>
+
       <Navbar />
 
       {/* Admin Banner - visible only to admin users */}
@@ -189,11 +323,12 @@ export default function Landing() {
             {bgImages.map((url, idx) => (
               <div
                 key={idx}
-                className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+                className={`absolute inset-0 bg-cover bg-center transition-opacity duration-700 ${idx === bgIndex ? "hero-bg-active" : ""
+                  }`}
                 style={{
                   backgroundImage: `url(${url})`,
                   opacity: idx === bgIndex ? 1 : 0,
-                  transform: idx === bgIndex ? 'scale(1)' : 'scale(1.06)',
+                  transform: idx === bgIndex ? undefined : 'scale(1.06)',
                 }}
               />
             ))}
@@ -201,29 +336,45 @@ export default function Landing() {
           </div>
 
           {/* Ambient Glow */}
-          <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
+          <div className="hero-glow-float absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-0">
-            <div className="max-w-2xl animate-fade-in">
-              <div className="inline-flex items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
-                <Sparkles size={14} className="text-gold-400" />
+            <div className={`max-w-2xl transition-transform duration-500 ${bgPulse ? "hero-pulse" : ""}`}>
+              <div className="hero-badge inline-flex items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
+                <Sparkles size={14} className="hero-sparkle text-gold-400" />
                 <span className="text-xs font-semibold text-gold-400 tracking-widest uppercase">
                   New Season Collection
                 </span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-[1.1] tracking-tight">
-                Celebrate Grace,{" "}
-                <span className="font-luxury italic text-gradient-gold">
-                  Wear Tradition
-                </span>
+              <h1 className="hero-heading text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-[1.1] tracking-tight">
+                {(() => {
+                  const current = heroHeadlines[headlineIndex];
+                  const line1WithSpace = `${current.line1} `;
+                  const visible = `${current.line1} ${current.line2}`.slice(0, typedLength);
+                  const line1Visible = visible.slice(0, Math.min(typedLength, line1WithSpace.length));
+                  const line2Visible = typedLength > line1WithSpace.length
+                    ? visible.slice(line1WithSpace.length)
+                    : "";
+                  return (
+                    <>
+                      {line1Visible}
+                      {line2Visible && (
+                        <span className="hero-heading-gradient font-luxury italic text-gradient-gold">
+                          {line2Visible}
+                        </span>
+                      )}
+                      <span className="typewriter-caret text-gold-400" style={{ height: "0.85em" }}>&nbsp;</span>
+                    </>
+                  );
+                })()}
               </h1>
 
-              <p className="mt-6 text-base sm:text-lg text-text-secondary max-w-lg leading-relaxed">
+              <p className="hero-desc mt-6 text-base sm:text-lg text-text-secondary max-w-lg leading-relaxed">
                 Discover thoughtfully crafted women’s fashion that blends timeless tradition with modern elegance — designed for confidence, beauty, and every special moment.
               </p>
 
-              <div className="flex flex-wrap gap-4 mt-8">
+              <div className="hero-cta flex flex-wrap gap-4 mt-8">
                 <Link
                   to="/shop"
                   className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.45)] hover:-translate-y-0.5 active:scale-[0.98]"
