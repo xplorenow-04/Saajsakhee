@@ -41,6 +41,10 @@ const userAuth = asyncHandler(async (req,res,next)=>{
 
     const user = await User.findById(decodedToken._id).select("-password")
 
+    if (user && user.isDisabled) {
+        throw new ApiError(403, "Your account has been disabled. Please contact support.")
+    }
+
     req.user = user
 
     next();

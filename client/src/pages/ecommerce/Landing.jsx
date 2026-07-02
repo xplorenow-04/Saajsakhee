@@ -19,32 +19,8 @@ import Footer from "../../components/ecommerce/Footer";
 import ProductCard from "../../components/ecommerce/ProductCard";
 import LoadingSkeleton from "../../components/ecommerce/LoadingSkeleton";
 import { userAuthStore } from "../../store/userStore";
+import { useShippingSettings } from "../../hooks/useShippingSettings";
 
-// const features = [
-
-// ];
-const features = [
-  {
-    icon: Truck,
-    title: "Free Shipping",
-    desc: "On orders above ₹999",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Secure Payment",
-    desc: "100% secure transactions",
-  },
-  {
-    icon: RefreshCw,
-    title: "Easy Returns",
-    desc: "30-day return policy",
-  },
-  {
-    icon: Sparkles,
-    title: "Premium Quality",
-    desc: "Handpicked collections",
-  },
-];
 
 const bgImages = [
   "https://img.magnific.com/free-photo/stylish-happy-girl-shopping-portrait-modern-woman-with-shop-bag-laughing-smiling-satisfied_1258-119361.jpg?semt=ais_hybrid&w=740&q=80",
@@ -73,14 +49,39 @@ const formatPrice = (price) =>
   }).format(price);
 
 export default function Landing() {
+  const { user } = userAuthStore();
+  const isAdmin = user?.role === "admin";
+  const { settings } = useShippingSettings();
+
+  const features = [
+    {
+      icon: Truck,
+      title: "Free Shipping",
+      desc: `On orders above ₹${settings?.freeShippingThreshold || 0}`,
+    },
+    {
+      icon: ShieldCheck,
+      title: "Secure Payment",
+      desc: "100% secure transactions",
+    },
+    {
+      icon: RefreshCw,
+      title: "Easy Returns",
+      desc: "30-day return policy",
+    },
+    {
+      icon: Sparkles,
+      title: "Premium Quality",
+      desc: "Handpicked collections",
+    },
+  ];
+
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [trending, setTrending] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [bgIndex, setBgIndex] = useState(0);
-  const user = userAuthStore((s) => s.user);
-  const isAdmin = user?.role === 'admin';
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 

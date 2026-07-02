@@ -71,7 +71,9 @@ app.use("/api/admin", adminRouter)
 app.use("/api/categories", categoryRouter)
 
 import wishlistRouter from "./routes/wishlist.route.js"
+import settingsRouter from "./routes/settings.route.js"
 app.use("/api/wishlist", wishlistRouter)
+app.use("/api/settings", settingsRouter)
 
 // const PORT = process.env.PORT || 3000;
 // httpServer.listen(PORT, () => {

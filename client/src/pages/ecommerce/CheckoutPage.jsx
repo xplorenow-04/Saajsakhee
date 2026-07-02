@@ -17,6 +17,7 @@ import { useEcommerceStore } from "../../store/useEcommerceStore";
 import Navbar from "../../components/ecommerce/Navbar";
 import Footer from "../../components/ecommerce/Footer";
 import LoadingSkeleton from "../../components/ecommerce/LoadingSkeleton";
+import { useShippingSettings } from "../../hooks/useShippingSettings";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
@@ -39,6 +40,7 @@ const initialForm = {
 export default function CheckoutPage() {
   const navigate = useNavigate();
   const { cart, cartCount, cartLoading, fetchCart } = useEcommerceStore();
+  const { settings, loading: settingsLoading } = useShippingSettings();
 
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
@@ -109,7 +111,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (cartLoading) {
+  if (cartLoading || settingsLoading) {
     return (
       <div className="min-h-screen bg-surface-900">
         <Navbar />
@@ -135,10 +137,10 @@ export default function CheckoutPage() {
     const itemPrice = item.price || p.price || 0;
     return sum + (itemPrice * discount * item.quantity) / 100;
   }, 0);
-  const deliveryCharge = subtotal >= 999 ? 0 : 99;
+  const deliveryCharge = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingCharge;
   const total = subtotal - totalDiscount + deliveryCharge;
 
-  if (items.length === 0 && !cartLoading) {
+  if (items.length === 0 && !cartLoading && !settingsLoading) {
     navigate("/cart", { replace: true });
     return null;
   }
@@ -426,7 +428,7 @@ export default function CheckoutPage() {
                   </div>
                   {deliveryCharge > 0 && (
                     <p className="text-xs text-text-muted">
-                      Free delivery on orders above <span className="text-text-secondary">Rs.999</span>
+                      Free delivery on orders above <span className="text-text-secondary">Rs.{settings.freeShippingThreshold}</span>
                     </p>
                   )}
 

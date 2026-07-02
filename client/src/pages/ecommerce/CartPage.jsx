@@ -15,6 +15,7 @@ import Footer from "../../components/ecommerce/Footer";
 import LoadingSkeleton from "../../components/ecommerce/LoadingSkeleton";
 import EmptyState from "../../components/ecommerce/EmptyState";
 import QuantitySelector from "../../components/ecommerce/QuantitySelector";
+import { useShippingSettings } from "../../hooks/useShippingSettings";
 
 const formatPrice = (price) =>
   new Intl.NumberFormat("en-IN", {
@@ -36,6 +37,8 @@ export default function CartPage() {
     removeFromCart,
     clearCart,
   } = useEcommerceStore();
+
+  const { settings, loading: settingsLoading } = useShippingSettings();
 
   const [clearing, setClearing] = useState(false);
   const [removingItems, setRemovingItems] = useState(new Set());
@@ -125,7 +128,7 @@ ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deli
   };
 
 
-  if (cartLoading) {
+  if (cartLoading || settingsLoading) {
     return (
       <div className="min-h-screen bg-surface-900">
         <Navbar />
@@ -152,7 +155,7 @@ ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deli
     const itemPrice = item.price || p.price || 0;
     return sum + (itemPrice * discount * item.quantity) / 100;
   }, 0);
-  const deliveryCharge = subtotal >= 999 ? 0 : 99;
+  const deliveryCharge = subtotal >= settings.freeShippingThreshold ? 0 : settings.shippingCharge;
   const total = subtotal - totalDiscount + deliveryCharge;
 
   return (
@@ -352,7 +355,7 @@ ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deli
                     {deliveryCharge > 0 && (
                       <p className="text-xs text-text-muted">
                         Free delivery on orders above{" "}
-                        <span className="text-text-secondary">₹999</span>
+                        <span className="text-text-secondary">₹{settings.freeShippingThreshold}</span>
                       </p>
                     )}
 

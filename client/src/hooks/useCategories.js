@@ -27,6 +27,7 @@ export function useManageCategories() {
             const fd = new FormData();
             fd.append("name", categoryData.name);
             fd.append("description", categoryData.description || "");
+            if (categoryData.parentId) fd.append("parentId", categoryData.parentId);
             if (categoryData.imageFile) fd.append("image", categoryData.imageFile);
             const { data } = await axios.post(BASE_URL, fd, {
                 withCredentials: true,
@@ -51,6 +52,7 @@ export function useManageCategories() {
             const fd = new FormData();
             fd.append("name", categoryData.name);
             fd.append("description", categoryData.description || "");
+            fd.append("parentId", categoryData.parentId || "");
             if (categoryData.imageFile) fd.append("image", categoryData.imageFile);
             const { data } = await axios.put(`${BASE_URL}/${id}`, fd, {
                 withCredentials: true,

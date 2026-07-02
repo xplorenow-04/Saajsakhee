@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { userApi } from '../../api/user.api'
-import { User, AtSign, Mail, Lock, Loader2, Sparkles } from 'lucide-react'
+import { User, AtSign, Mail, Lock, Loader2, Sparkles, Phone } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
 function Register() {
     const navigate = useNavigate()
-    const [form, setForm] = useState({ name: '', username: '', email: '', password: '' })
+    const [form, setForm] = useState({ name: '', username: '', email: '', phone: '', password: '' })
     const [loading, setLoading] = useState(false)
 
     useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -14,7 +14,7 @@ function Register() {
     const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }))
 
     const validate = () => {
-        const { name, username, email, password } = form
+        const { name, username, email, phone, password } = form
         if (!name.trim() || !username.trim() || !email.trim() || !password.trim()) {
             toast.error('All fields are required')
             return false
@@ -29,6 +29,10 @@ function Register() {
         }
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
             toast.error('Enter a valid email address')
+            return false
+        }
+        if (phone.trim() !== '' && !/^[0-9]{10}$/.test(phone.trim())) {
+            toast.error('Phone number must be a valid 10-digit number')
             return false
         }
         if (password.length < 8) {
@@ -47,6 +51,7 @@ function Register() {
                 name: form.name.trim(),
                 username: form.username.trim().toLowerCase(),
                 email: form.email.trim().toLowerCase(),
+                phone: form.phone.trim(),
                 password: form.password
             })
             if (response.success) {
@@ -208,6 +213,24 @@ function Register() {
                                         value={form.email}
                                         onChange={handleChange}
                                         autoComplete="email"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label htmlFor="register-phone" className="text-[10px] sm:text-xs text-text-dim/70 tracking-wider uppercase mb-1.5 sm:mb-2 block">Mobile Number <span className="text-text-dim/40 normal-case">(optional)</span></label>
+                                <div className="relative group">
+                                    <Phone size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dim/50 pointer-events-none transition-colors group-focus-within:text-gold-400" />
+                                    <input
+                                        id="register-phone"
+                                        className="w-full bg-surface-800/60 border border-gold-500/10 rounded-xl py-3 sm:py-3.5 pl-11 pr-4 text-text-primary text-sm outline-none transition-all duration-200 placeholder:text-text-dim/30 focus:border-gold-500/40 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.08)] focus:bg-surface-800/80"
+                                        type="tel"
+                                        placeholder="10-digit mobile number"
+                                        name="phone"
+                                        value={form.phone}
+                                        onChange={handleChange}
+                                        maxLength={10}
+                                        autoComplete="tel"
                                     />
                                 </div>
                             </div>

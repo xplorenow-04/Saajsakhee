@@ -15,10 +15,18 @@ class CategoryService {
             throw new ApiError(400, "Category with this name already exists");
         }
 
+        if (data.parentId) {
+            const parentExists = await Category.findById(data.parentId);
+            if (!parentExists) {
+                throw new ApiError(400, "Parent category not found");
+            }
+        }
+
         const category = await Category.create({
             name: data.name.trim(),
             description: (data.description || "").trim(),
             image: data.image || { url: "", publicId: "" },
+            parent: data.parentId || null,
             createdBy: userId
         });
 
@@ -35,6 +43,7 @@ class CategoryService {
         const filter = includeInactive ? {} : { isActive: true };
         const categories = await Category.find(filter)
             .sort({ name: 1 })
+            .populate("parent", "name slug")
             .lean();
 
         await redisService.set(cacheKey, categories, CACHE_TTL);
@@ -90,6 +99,16 @@ class CategoryService {
             category.image = data.image;
         }
         if (data.isActive !== undefined) category.isActive = data.isActive;
+        if (data.parentId !== undefined) {
+            if (data.parentId && data.parentId.toString() === id.toString()) {
+                throw new ApiError(400, "A category cannot be its own parent");
+            }
+            if (data.parentId) {
+                const parentExists = await Category.findById(data.parentId);
+                if (!parentExists) throw new ApiError(400, "Parent category not found");
+            }
+            category.parent = data.parentId || null;
+        }
 
         await category.save();
 

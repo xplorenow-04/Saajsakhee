@@ -6,7 +6,7 @@ import { logger } from "../utils/logger.js";
 import fs from "fs";
 
 export const createCategory = asyncHandler(async (req, res) => {
-    const { name, description } = req.body;
+    const { name, description, parentId } = req.body;
 
     if (!name || name.trim() === "") {
         return res.status(400).json(
@@ -25,7 +25,7 @@ export const createCategory = asyncHandler(async (req, res) => {
     }
 
     const category = await categoryService.createCategory(
-        { name, description, image },
+        { name, description, image, parentId: parentId || null },
         req.user._id
     );
 
@@ -63,7 +63,7 @@ export const getCategoryBySlug = asyncHandler(async (req, res) => {
 
 export const updateCategory = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, description, isActive } = req.body;
+    const { name, description, isActive, parentId } = req.body;
 
     let image;
     if (req.file) {
@@ -73,7 +73,7 @@ export const updateCategory = asyncHandler(async (req, res) => {
         }
     }
 
-    const category = await categoryService.updateCategory(id, { name, description, image, isActive });
+    const category = await categoryService.updateCategory(id, { name, description, image, isActive, parentId: parentId !== undefined ? (parentId || null) : undefined });
 
     return res.status(200).json(
         new ApiResponse(200, category, "Category updated successfully")
