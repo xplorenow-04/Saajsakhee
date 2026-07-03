@@ -27,7 +27,6 @@ const bgImages = [
 
   "https://res.cloudinary.com/dzgtlxfhv/image/upload/v1783087192/ChatGPT_Image_Jul_3_2026_07_29_33_PM_xw0axv.png",
 
-  // "https://res.cloudinary.com/drftighpf/image/upload/v1782994183/ChatGPT_Image_Jul_2_2026_05_39_23_PM_qe3imr.png",
   "https://res.cloudinary.com/drftighpf/image/upload/v1782995700/ChatGPT_Image_Jul_2_2026_06_04_23_PM_fokuu5.png",
 
   "https://res.cloudinary.com/drftighpf/image/upload/v1782994438/ChatGPT_Image_Jul_2_2026_05_43_40_PM_dospsm.png",
