@@ -147,7 +147,7 @@ export default function ProductListing() {
       try {
         const params = {
           page: currentPage,
-          limit: 12,
+          limit: 8,
           sort: currentSort,
         };
         if (currentCategory) params.category = currentCategory;
@@ -196,6 +196,13 @@ export default function ProductListing() {
     e.preventDefault();
     updateParams({ search: searchInput.trim(), page: "1" });
   };
+
+  const handleMinPrice = (e) => {
+    currentMinPrice = e.target.value
+    setTimeout(() => {
+      updateParams({ minPrice: e.target.value })
+    }, 2000)
+  }
 
   const FilterSidebar = () => (
     <div className="space-y-8">
@@ -274,8 +281,8 @@ export default function ProductListing() {
                 key={size}
                 onClick={() => toggleSize(size)}
                 className={`px-3.5 py-2 text-xs font-semibold rounded-lg border transition-all ${isActive
-                    ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950 shadow-[0_2px_10px_rgba(212,175,55,0.2)]"
-                    : "bg-surface-950 border-surface-600 text-text-secondary hover:border-gold-500/40 hover:text-gold-400"
+                  ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950 shadow-[0_2px_10px_rgba(212,175,55,0.2)]"
+                  : "bg-surface-950 border-surface-600 text-text-secondary hover:border-gold-500/40 hover:text-gold-400"
                   }`}
               >
                 {size}
@@ -357,7 +364,7 @@ export default function ProductListing() {
                 {showSuggestions && suggestions.length > 0 && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-surface-900/95 backdrop-blur-xl border border-surface-600/60 rounded-xl shadow-[0_12px_40px_rgba(0,0,0,0.85)] overflow-hidden z-50">
                     {suggestions.map((p) => (
-                       <Link
+                      <Link
                         key={p._id}
                         to={`/shop/${p.slug}`}
                         onClick={() => { setSearchInput(""); setShowSuggestions(false); }}
@@ -508,8 +515,8 @@ export default function ProductListing() {
                                 updateParams({ page: String(pageNum) })
                               }
                               className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${currentPage === pageNum
-                                  ? "bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 shadow-[0_4px_12px_rgba(212,175,55,0.25)] border-transparent"
-                                  : "bg-surface-800 border border-surface-600 text-text-secondary hover:text-gold-400 hover:border-gold-500/30"
+                                ? "bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 shadow-[0_4px_12px_rgba(212,175,55,0.25)] border-transparent"
+                                : "bg-surface-800 border border-surface-600 text-text-secondary hover:text-gold-400 hover:border-gold-500/30"
                                 }`}
                             >
                               {pageNum}
