@@ -205,7 +205,7 @@ export default function ProductListing() {
   }
 
   const FilterSidebar = () => (
-    <div className="space-y-8">
+    <div className="space-y-8 sticky top-10">
       {/* Category Filter */}
       <div>
         <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-3">
@@ -293,7 +293,7 @@ export default function ProductListing() {
       </div>
 
       {/* Discount Filter */}
-      <div>
+      {/* <div>
         <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-3">
           Discount
         </h4>
@@ -320,7 +320,7 @@ export default function ProductListing() {
             </label>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 

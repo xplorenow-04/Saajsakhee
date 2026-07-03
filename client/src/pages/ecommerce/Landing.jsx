@@ -25,22 +25,24 @@ import { useShippingSettings } from "../../hooks/useShippingSettings";
 const bgImages = [
   "https://res.cloudinary.com/drftighpf/image/upload/v1782993691/ChatGPT_Image_Jul_2_2026_05_31_04_PM_pb3xnv.png",
 
-  "https://res.cloudinary.com/drftighpf/image/upload/v1782994054/ChatGPT_Image_Jul_2_2026_05_36_16_PM_jyavyc.png",
+  "https://res.cloudinary.com/dzgtlxfhv/image/upload/v1783087192/ChatGPT_Image_Jul_3_2026_07_29_33_PM_xw0axv.png",
 
   // "https://res.cloudinary.com/drftighpf/image/upload/v1782994183/ChatGPT_Image_Jul_2_2026_05_39_23_PM_qe3imr.png",
   "https://res.cloudinary.com/drftighpf/image/upload/v1782995700/ChatGPT_Image_Jul_2_2026_06_04_23_PM_fokuu5.png",
 
   "https://res.cloudinary.com/drftighpf/image/upload/v1782994438/ChatGPT_Image_Jul_2_2026_05_43_40_PM_dospsm.png",
 
-  "https://res.cloudinary.com/drftighpf/image/upload/v1782994525/ChatGPT_Image_Jul_2_2026_05_45_15_PM_spa0s0.png"
+  "https://res.cloudinary.com/dzgtlxfhv/image/upload/v1783086977/ChatGPT_Image_Jul_3_2026_07_23_49_PM_vuxxil.png"
 
 ];
-// const bgImages = [
-//   "https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1920&q=80",
-//   "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?auto=format&fit=crop&w=1920&q=80",
-//   "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1920&q=80",
-//   "https://images.unsplash.com/photo-1556909172-54557c2e4fb7?auto=format&fit=crop&w=1920&q=80",
-// ];
+
+const bgImagesMobile = [
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782995700/ChatGPT_Image_Jul_2_2026_06_04_23_PM_fokuu5.png",
+  "https://res.cloudinary.com/drftighpf/image/upload/v1782994525/ChatGPT_Image_Jul_2_2026_05_45_15_PM_spa0s0.png",
+
+  "https://res.cloudinary.com/dzgtlxfhv/image/upload/v1783087353/ChatGPT_Image_Jul_3_2026_07_32_21_PM_ib2l95.png",
+  "https://res.cloudinary.com/dzgtlxfhv/image/upload/v1783086817/ChatGPT_Image_Jul_3_2026_07_22_06_PM_n2xp6p.png",
+];
 
 // Vertical focal point for the hero slideshow images, expressed as a
 // background-position percentage. 0% = hard top, 50% = dead center.
@@ -120,8 +122,20 @@ export default function Landing() {
   // headline/description feel synchronized with the slideshow instead of
   // sitting static on top of it.
   const [bgPulse, setBgPulse] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => { window.scrollTo(0, 0); }, []);
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 768);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const images = isMobile ? bgImagesMobile : bgImages;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -147,10 +161,10 @@ export default function Landing() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setBgIndex((prev) => (prev + 1) % bgImages.length);
+      setBgIndex((prev) => (prev + 1) % images.length);
     }, SLIDE_DURATION_MS);
     return () => clearInterval(timer);
-  }, []);
+  }, [images.length]);
 
   // Typewriter effect: types out the current headline, pauses, deletes it,
   // then moves to the next headline and types that one — a continuous
@@ -184,11 +198,15 @@ export default function Landing() {
   }, [typedLength, typePhase, headlineIndex]);
 
   useEffect(() => {
-    bgImages.forEach((url) => {
+    [...bgImages, ...bgImagesMobile].forEach((url) => {
       const img = new Image();
       img.src = url;
     });
   }, []);
+
+  useEffect(() => {
+    setBgIndex((prev) => Math.min(prev, images.length - 1));
+  }, [images.length]);
 
   // Sync a soft glow/lift pulse on the hero copy with every slide change.
   useEffect(() => {
@@ -357,7 +375,7 @@ export default function Landing() {
           {/* Background Slideshow */}
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-r from-surface-900 via-surface-900/70 to-transparent z-10" />
-            {bgImages.map((url, idx) => (
+            {images.map((url, idx) => (
               <div
                 key={idx}
                 className={`absolute inset-0 bg-cover transition-opacity duration-700 ${idx === bgIndex ? "hero-bg-active" : ""
@@ -502,7 +520,7 @@ export default function Landing() {
         </section>
 
         {/* Categories Section */}
-        <section className="py-16 lg:py-24 bg-surface-800/50">
+        <section className="py-5 lg:py-24 bg-surface-800/50 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-start justify-between gap-4 mb-12">
               <div className="flex-1 text-center">
@@ -529,7 +547,7 @@ export default function Landing() {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6 ">
                 <LoadingSkeleton type="card" count={4} />
               </div>
             ) : categories.length > 0 ? (
@@ -571,10 +589,10 @@ export default function Landing() {
                 {categories.length > 4 && (
                   <Link
                     to="/categories"
-                    className="sm:hidden flex items-center justify-center aspect-[3/4] rounded-xl border border-dashed border-surface-700/50 hover:border-accent/30 transition-all duration-300 text-xs font-semibold text-accent hover:text-gold-400 gap-1.5"
+                    className="sm:hidden flex items-start relative bottom-[-10%] justify-center aspect-[3/4] rounded-xl border border-dashed border-surface-700/50 hover:border-accent/30 transition-all duration-300 text-md font-semibold text-accent hover:text-gold-400 gap-1.5"
                   >
                     <span>Show More</span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={16} />
                   </Link>
                 )}
               </div>
