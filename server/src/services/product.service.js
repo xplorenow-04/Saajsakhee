@@ -67,7 +67,7 @@ class ProductService {
         return product;
     }
 
-    async listProducts(query, page = 1, limit = 20) {
+    async listProducts(query, page = 1, limit = 5) {
         const { category, minPrice, maxPrice, size, minDiscount, search, sort } = query;
 
         const filter = { isActive: true };

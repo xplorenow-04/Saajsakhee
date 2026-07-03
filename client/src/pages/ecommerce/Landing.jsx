@@ -499,16 +499,28 @@ export default function Landing() {
         {/* Categories Section */}
         <section className="py-16 lg:py-24 bg-surface-800/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <span className="text-xs font-semibold text-gold-400 uppercase tracking-widest">
-                Collections
-              </span>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-luxury text-gradient-gold mt-2">
-                Shop by Category
-              </h2>
-              <p className="text-text-muted text-sm mt-1.5 max-w-md mx-auto">
-                Explore our curated categories designed for every occasion
-              </p>
+            <div className="flex items-start justify-between gap-4 mb-12">
+              <div className="flex-1 text-center">
+                <span className="text-xs font-semibold text-gold-400 uppercase tracking-widest">
+                  Collections
+                </span>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-luxury text-gradient-gold mt-2">
+                  Shop by Category
+                </h2>
+                <p className="text-text-muted text-sm mt-1.5 max-w-md mx-auto">
+                  Explore our curated categories designed for every occasion
+                </p>
+              </div>
+
+              {!loading && categories.length > 4 && (
+                <Link
+                  to="/categories"
+                  className="shrink-0 hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-accent hover:text-gold-400 transition-colors whitespace-nowrap mt-1"
+                >
+                  <span>Show More</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
+              )}
             </div>
 
             {loading ? (
@@ -517,7 +529,7 @@ export default function Landing() {
               </div>
             ) : categories.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-                {categories.map((cat) => (
+                {categories.slice(0, 4).map((cat) => (
                   <Link
                     key={cat._id || cat.slug}
                     to={`/shop?category=${cat.slug}`}
@@ -549,6 +561,17 @@ export default function Landing() {
                     </div>
                   </Link>
                 ))}
+
+                {/* Mobile-only show more, shown as last grid item */}
+                {categories.length > 4 && (
+                  <Link
+                    to="/categories"
+                    className="sm:hidden flex items-center justify-center aspect-[3/4] rounded-xl border border-dashed border-surface-700/50 hover:border-accent/30 transition-all duration-300 text-xs font-semibold text-accent hover:text-gold-400 gap-1.5"
+                  >
+                    <span>Show More</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                )}
               </div>
             ) : (
               <div className="text-center py-12 text-text-muted text-sm">
@@ -611,42 +634,7 @@ export default function Landing() {
         </section>
 
         {/* Newsletter Section */}
-        <section className="py-16 lg:py-24 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-accent/5 via-transparent to-violet/5" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-accent/3 rounded-full blur-[150px] pointer-events-none" />
 
-          <div className="relative max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 mb-6">
-              <Mail size={24} className="text-accent" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text-primary">
-              Stay in the Loop
-            </h2>
-            <p className="text-text-muted text-sm mt-3 max-w-md mx-auto leading-relaxed">
-              Subscribe to get notified about new arrivals, exclusive drops, and
-              special offers delivered to your inbox.
-            </p>
-            <form
-              onSubmit={handleNewsletter}
-              className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-            >
-              <input
-                type="email"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="flex-1 bg-surface-950 border border-surface-600 rounded-xl px-5 py-3.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/20 transition-all"
-              />
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-gold-400 to-gold-600 text-neutral-950 font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_15px_rgba(212,175,55,0.25)] hover:shadow-[0_4px_20px_rgba(212,175,55,0.4)] active:scale-[0.98]"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </section>
       </main>
 
       <Footer />

@@ -25,6 +25,8 @@ import { userAuthStore } from "../../store/userStore";
 import Navbar from "../../components/ecommerce/Navbar";
 import Footer from "../../components/ecommerce/Footer";
 import LoadingSkeleton from "../../components/ecommerce/LoadingSkeleton";
+import { useShippingSettings } from "../../hooks/useShippingSettings";
+
 import QuantitySelector from "../../components/ecommerce/QuantitySelector";
 
 const formatPrice = (price) =>
@@ -68,6 +70,9 @@ export default function ProductDetail() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [addingToCart, setAddingToCart] = useState(false);
   const [openAccordion, setOpenAccordion] = useState(null);
+
+  const { settings } = useShippingSettings();
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -161,13 +166,13 @@ export default function ProductDetail() {
         return; // Successfully shared using native dialog
       } catch (err) {
         if (err.name !== 'AbortError') {
-           // User didn't just cancel, so fallback to copy
+          // User didn't just cancel, so fallback to copy
         } else {
-           return;
+          return;
         }
       }
     }
-    
+
     // Fallback: Copy to clipboard
     try {
       await navigator.clipboard.writeText(url);
@@ -262,7 +267,7 @@ export default function ProductDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-text-muted mb-6">
-            <Link to="/ecommerce" className="hover:text-accent transition-colors">
+            <Link to="/" className="hover:text-accent transition-colors">
               Home
             </Link>
             <span>/</span>
@@ -296,17 +301,16 @@ export default function ProductDetail() {
                   </div>
                 )}
                 <div className="absolute top-4 right-4 flex flex-col gap-2">
-                  <button 
+                  <button
                     onClick={handleWishlistToggle}
-                    className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${
-                      isInWishlist(product._id) 
-                        ? "bg-gold-500/20 text-gold-400" 
-                        : "bg-surface-900/70 text-text-muted hover:text-accent hover:bg-surface-900"
-                    }`}
+                    className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all ${isInWishlist(product._id)
+                      ? "bg-gold-500/20 text-gold-400"
+                      : "bg-surface-900/70 text-text-muted hover:text-accent hover:bg-surface-900"
+                      }`}
                   >
                     <Heart size={18} className={isInWishlist(product._id) ? "fill-gold-400" : ""} />
                   </button>
-                  <button 
+                  <button
                     onClick={handleShare}
                     className="w-10 h-10 rounded-full bg-surface-900/70 backdrop-blur-sm flex items-center justify-center text-text-muted hover:text-accent hover:bg-surface-900 transition-all"
                     title="Share Product"
@@ -324,8 +328,8 @@ export default function ProductDetail() {
                       key={idx}
                       onClick={() => setSelectedImage(idx)}
                       className={`shrink-0 w-20 h-24 rounded-xl overflow-hidden border-2 transition-all ${selectedImage === idx
-                          ? "border-accent ring-1 ring-accent/30"
-                          : "border-surface-700/50 hover:border-surface-500"
+                        ? "border-accent ring-1 ring-accent/30"
+                        : "border-surface-700/50 hover:border-surface-500"
                         }`}
                     >
                       <img
@@ -406,10 +410,10 @@ export default function ProductDetail() {
                           }}
                           disabled={outOfStock}
                           className={`relative min-w-[52px] px-4 py-3 text-sm font-semibold rounded-xl border transition-all ${isSelected
-                              ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950 shadow-[0_4px_12px_rgba(212,175,55,0.25)]"
-                              : outOfStock
-                                ? "bg-surface-800/40 border-surface-600/60 text-text-dim/20 line-through cursor-not-allowed"
-                                : "bg-surface-950 border-surface-600 text-text-secondary hover:border-gold-500/40 hover:text-gold-400"
+                            ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950 shadow-[0_4px_12px_rgba(212,175,55,0.25)]"
+                            : outOfStock
+                              ? "bg-surface-800/40 border-surface-600/60 text-text-dim/20 text-white bg-red-500 line-through cursor-not-allowed"
+                              : "bg-surface-950 border-surface-600 text-text-secondary hover:border-gold-500/40 hover:text-gold-400"
                             }`}
                         >
                           {sizeVal}
@@ -449,26 +453,34 @@ export default function ProductDetail() {
                     min={1}
                     max={10}
                   />
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={!inStock || addingToCart}
-                    className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.5)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ShoppingBag size={18} />
-                    {addingToCart ? "Adding..." : "Add to Cart"}
-                  </button>
+
+                  {
+                    user?.role !== "admin" &&        // ----------- Only User Visisble not Admin -----------
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={!inStock || addingToCart}
+                      className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-bold py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.35)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.5)] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ShoppingBag size={18} />
+                      {addingToCart ? "Adding..." : "Add to Cart"}
+                    </button>
+                  }
+
                 </div>
 
-                <button
-                  onClick={handleOrderViaWhatsApp}
-                  disabled={!inStock}
-                  className="w-full flex items-center justify-center gap-2 border border-[#25D366]/40 hover:border-[#25D366] text-[#25D366] hover:bg-[#25D366]/5 font-semibold py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.484 2.012 14.03 1.002 11.99 1.002c-5.447 0-9.873 4.372-9.877 9.802-.001 1.777.469 3.51 1.36 5.031L2.44 20.8l5.127-1.332.08-.047c.001-.001.001-.001.002-.002zm12.361-5.395c-.33-.165-1.951-.951-2.253-1.061-.301-.11-.52-.165-.74.165-.22.33-.852 1.061-1.044 1.281-.192.22-.384.247-.714.082-1.359-.68-2.335-1.18-3.148-2.58-.216-.374.216-.347.618-1.15.066-.138.033-.259-.017-.364-.05-.105-.44-1.06-.603-1.453-.159-.384-.334-.33-.46-.337-.118-.006-.253-.007-.388-.007-.136 0-.356.05-.542.253-.187.203-.712.697-.712 1.7 0 1.003.729 1.972.83 2.11.101.137 1.436 2.193 3.479 3.075.487.21 1.01.272 1.408.21.439-.065 1.348-.551 1.537-1.056.19-.505.19-.938.133-1.029-.056-.091-.207-.145-.537-.31z" />
-                  </svg>
-                  Order via WhatsApp
-                </button>
+                {
+                  user?.role !== "admin" &&         // ----------- Only User Visisble not Admin -----------
+                  <button
+                    onClick={handleOrderViaWhatsApp}
+                    disabled={!inStock}
+                    className="w-full flex items-center justify-center gap-2 border border-[#25D366]/40 hover:border-[#25D366] text-[#25D366] hover:bg-[#25D366]/5 font-semibold py-3.5 rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.484 2.012 14.03 1.002 11.99 1.002c-5.447 0-9.873 4.372-9.877 9.802-.001 1.777.469 3.51 1.36 5.031L2.44 20.8l5.127-1.332.08-.047c.001-.001.001-.001.002-.002zm12.361-5.395c-.33-.165-1.951-.951-2.253-1.061-.301-.11-.52-.165-.74.165-.22.33-.852 1.061-1.044 1.281-.192.22-.384.247-.714.082-1.359-.68-2.335-1.18-3.148-2.58-.216-.374.216-.347.618-1.15.066-.138.033-.259-.017-.364-.05-.105-.44-1.06-.603-1.453-.159-.384-.334-.33-.46-.337-.118-.006-.253-.007-.388-.007-.136 0-.356.05-.542.253-.187.203-.712.697-.712 1.7 0 1.003.729 1.972.83 2.11.101.137 1.436 2.193 3.479 3.075.487.21 1.01.272 1.408.21.439-.065 1.348-.551 1.537-1.056.19-.505.19-.938.133-1.029-.056-.091-.207-.145-.537-.31z" />
+                    </svg>
+                    Order via WhatsApp
+                  </button>
+                }
               </div>
 
 
@@ -528,7 +540,7 @@ export default function ProductDetail() {
                             : item.id === "care"
                               ? (product.careInstructions ||
                                 "Dry clean recommended. Do not bleach. Iron on low heat. Store in a cool, dry place away from direct sunlight.")
-                              : "Free shipping on orders above ₹999. Orders are processed within 1-2 business days. Standard delivery takes 3-7 business days. Express delivery available at checkout."}
+                              : `Free shipping on orders above ₹ ${settings?.freeShippingThreshold || 0}. Standard delivery takes ${settings?.processingDays} business days. Express delivery available at checkout.`}
                         </p>
                       </div>
                     )}

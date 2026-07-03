@@ -174,7 +174,7 @@ export const getProductById = asyncHandler(async (req, res) => {
 });
 
 export const listProducts = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 20, ...filters } = req.query;
+    const { page = 1, limit = 5, ...filters } = req.query;
     const result = await productService.listProducts(filters, parseInt(page), parseInt(limit));
 
     return res.status(200).json(

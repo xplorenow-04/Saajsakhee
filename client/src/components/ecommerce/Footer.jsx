@@ -142,8 +142,8 @@ export default function Footer() {
             <ul className="space-y-3">
               {categoryLinks.map((cat) => (
                 <li key={cat.slug}>
-                    <Link
-                      to={`/shop?category=${cat.slug}`}
+                  <Link
+                    to={`/shop?category=${cat.slug}`}
                     className="text-sm text-text-muted hover:text-accent transition-colors"
                   >
                     {cat.name}
@@ -174,35 +174,6 @@ export default function Footer() {
               })}
             </div>
 
-            <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-3">
-              Newsletter
-            </h3>
-            <p className="text-xs text-text-muted mb-3 leading-relaxed">
-              Subscribe for exclusive offers, new arrivals, and behind-the-scenes
-              stories.
-            </p>
-            <form onSubmit={handleNewsletter} className="flex">
-              <div className="relative flex-1">
-                <Mail
-                  size={14}
-                  className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted"
-                />
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Your email"
-                  required
-                  className="w-full bg-surface-950 border border-surface-600 rounded-l-lg pl-10 pr-3 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent/60 focus:ring-1 focus:ring-accent/20 transition-all"
-                />
-              </div>
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-gold-400 to-gold-600 text-neutral-950 px-4 rounded-r-lg flex items-center justify-center hover:opacity-90 active:scale-[0.97] transition-all"
-              >
-                <Send size={16} />
-              </button>
-            </form>
           </div>
         </div>
 

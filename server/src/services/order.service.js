@@ -349,7 +349,7 @@ class OrderService {
             .populate("user", "name email")
             .lean();
 
-        const doc = new PDFDocument({ margin: 40, size: "A4" });
+        const doc = new PDFDocument({ margin: 40, size: "A4", bufferPages: true });
         const buffers = [];
 
         doc.on("data", (chunk) => buffers.push(chunk));
@@ -358,128 +358,226 @@ class OrderService {
             doc.on("end", () => resolve(Buffer.concat(buffers)));
             doc.on("error", reject);
 
-            const pageWidth = doc.page.width - 80;
+            // ---- Design tokens (minimal, mostly neutral palette) ----
+            const COLORS = {
+                ink: "#111827",        // primary text
+                subink: "#6b7280",     // secondary text
+                faint: "#9ca3af",      // tertiary text
+                border: "#e5e7eb",     // hairlines
+                headerBg: "#f9fafb",   // table header / zebra bg
+                accent: "#4f46e5",     // single accent, used sparingly
+                good: "#059669",
+                bad: "#dc2626",
+                warn: "#b45309",
+            };
+            const STATUS_COLOR = {
+                pending: COLORS.warn,
+                confirmed: COLORS.accent,
+                processing: COLORS.accent,
+                delivered: COLORS.good,
+                cancelled: COLORS.bad,
+            };
+
+            const marginX = 40;
+            const pageWidth = doc.page.width - marginX * 2;
+            const pageBottom = doc.page.height - 50;
             let y = 40;
 
-            const header = () => {
-                doc.fontSize(22).font("Helvetica-Bold").fillColor("#8B5CF6")
-                    .text("SAAJSAKHEE", 40, y, { align: "center" });
-                y += 28;
-                doc.fontSize(14).font("Helvetica-Bold").fillColor("#1f2937")
-                    .text("Orders Report", 40, y, { align: "center" });
-                y += 18;
-                doc.fontSize(9).font("Helvetica").fillColor("#6b7280")
-                    .text(`Generated: ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}`, 40, y, { align: "center" });
-                y += 22;
+            const money = (n) => `Rs. ${Number(n || 0).toLocaleString("en-IN")}`;
+
+            // ---- Reusable primitives ----
+            const hr = (color = COLORS.border, top = 0) => {
+                y += top;
+                doc.moveTo(marginX, y).lineTo(marginX + pageWidth, y)
+                    .strokeColor(color).lineWidth(0.75).stroke();
             };
 
-            const drawLine = () => {
-                doc.moveTo(40, y).lineTo(40 + pageWidth, y).strokeColor("#e5e7eb").lineWidth(1).stroke();
-                y += 14;
+            const ensureSpace = (needed, onNewPage) => {
+                if (y + needed > pageBottom) {
+                    doc.addPage();
+                    y = 40;
+                    if (onNewPage) onNewPage();
+                }
             };
 
-            const summary = () => {
+            // ---- Header (letterhead style, single brand mark) ----
+            const drawHeader = (isFirstPage) => {
+                if (isFirstPage) {
+                    doc.fontSize(18).font("Helvetica-Bold").fillColor(COLORS.ink)
+                        .text("SAAJSAKHEE", marginX, y);
+                    doc.fontSize(9).font("Helvetica").fillColor(COLORS.subink)
+                        .text("Orders Report", marginX, y + 22);
+
+                    doc.fontSize(8).font("Helvetica").fillColor(COLORS.subink)
+                        .text(
+                            `Generated ${new Date().toLocaleString("en-IN", {
+                                timeZone: "Asia/Kolkata",
+                                dateStyle: "medium",
+                                timeStyle: "short",
+                            })}`,
+                            marginX,
+                            y,
+                            { width: pageWidth, align: "right" }
+                        );
+                    y += 40;
+                    hr(COLORS.ink);
+                    y += 18;
+                } else {
+                    doc.fontSize(9).font("Helvetica-Bold").fillColor(COLORS.subink)
+                        .text("SAAJSAKHEE — Orders Report", marginX, y);
+                    y += 14;
+                    hr(COLORS.border);
+                    y += 14;
+                }
+            };
+
+            // ---- Summary strip: label/value pairs, no boxes/fills ----
+            const drawSummary = () => {
                 const total = orders.length;
-                const pending = orders.filter(o => o.orderStatus === "pending").length;
-                const confirmed = orders.filter(o => o.orderStatus === "confirmed").length;
-                const delivered = orders.filter(o => o.orderStatus === "delivered").length;
-                const cancelled = orders.filter(o => o.orderStatus === "cancelled").length;
+                const delivered = orders.filter((o) => o.orderStatus === "delivered").length;
+                const cancelled = orders.filter((o) => o.orderStatus === "cancelled").length;
+                const pending = orders.filter((o) => o.orderStatus === "pending").length;
                 const revenue = orders
-                    .filter(o => o.orderStatus !== "cancelled")
+                    .filter((o) => o.orderStatus !== "cancelled")
                     .reduce((sum, o) => sum + (o.finalAmount || 0), 0);
 
-                doc.fontSize(10).font("Helvetica-Bold").fillColor("#374151").text("SUMMARY", 40, y);
-                y += 16;
-
-                const boxW = (pageWidth - 24) / 4;
-                const boxes = [
-                    { label: "Total Orders", value: total, color: "#8B5CF6" },
-                    { label: "Total Revenue", value: `₹${revenue.toLocaleString("en-IN")}`, color: "#10B981" },
-                    { label: "Delivered", value: delivered, color: "#10B981" },
-                    { label: "Cancelled", value: cancelled, color: "#EF4444" },
+                const stats = [
+                    { label: "TOTAL ORDERS", value: String(total) },
+                    { label: "NET REVENUE", value: money(revenue) },
+                    { label: "DELIVERED", value: String(delivered) },
+                    { label: "PENDING", value: String(pending) },
+                    { label: "CANCELLED", value: String(cancelled) },
                 ];
 
-                boxes.forEach((b, i) => {
-                    const bx = 40 + i * (boxW + 8);
-                    doc.roundedRect(bx, y, boxW, 44, 6).fillColor("#f9fafb").fill()
-                        .fillColor("#6b7280").fontSize(7).font("Helvetica").text(b.label, bx + 8, y + 6, { width: boxW - 16, align: "center" })
-                        .fillColor(b.color).fontSize(14).font("Helvetica-Bold").text(String(b.value), bx + 8, y + 18, { width: boxW - 16, align: "center" });
+                const colW = pageWidth / stats.length;
+                stats.forEach((s, i) => {
+                    const x = marginX + i * colW;
+                    doc.fontSize(7).font("Helvetica").fillColor(COLORS.faint)
+                        .text(s.label, x, y, { width: colW - 10, characterSpacing: 0.4 });
+                    doc.fontSize(13).font("Helvetica-Bold").fillColor(COLORS.ink)
+                        .text(s.value, x, y + 11, { width: colW - 10 });
                 });
-                y += 58;
+                y += 40;
+                hr(COLORS.border);
+                y += 16;
             };
+
+            // ---- Table column layout ----
+            const cols = [
+                { key: "id", label: "ORDER ID", x: marginX, w: 78, align: "left" },
+                { key: "customer", label: "CUSTOMER", x: marginX + 78, w: 118, align: "left" },
+                { key: "items", label: "ITEMS", x: marginX + 196, w: 40, align: "center" },
+                { key: "total", label: "TOTAL", x: marginX + 236, w: 74, align: "right" },
+                { key: "status", label: "STATUS", x: marginX + 318, w: 70, align: "left" },
+                { key: "date", label: "DATE", x: marginX + 396, w: pageWidth - 396, align: "right" },
+            ];
 
             const drawTableHeader = () => {
-                drawLine();
-                doc.roundedRect(40, y - 4, pageWidth, 22, 4).fillColor("#f3f4f6").fill();
-                const cols = [
-                    { x: 44, w: 70, label: "Order ID" },
-                    { x: 118, w: 90, label: "Customer" },
-                    { x: 212, w: 50, label: "Items" },
-                    { x: 266, w: 60, label: "Total" },
-                    { x: 330, w: 60, label: "Status" },
-                    { x: 394, w: 82, label: "Date" },
-                ];
-                doc.fillColor("#374151").fontSize(8).font("Helvetica-Bold");
-                cols.forEach(c => doc.text(c.label, c.x, y + 2, { width: c.w, align: "left" }));
-                y += 24;
+                doc.fontSize(7.5).font("Helvetica-Bold").fillColor(COLORS.subink);
+                cols.forEach((c) =>
+                    doc.text(c.label, c.x, y, { width: c.w, align: c.align, characterSpacing: 0.3 })
+                );
+                y += 14;
+                hr(COLORS.ink);
+                y += 10;
             };
 
-            header();
-            summary();
+            const drawOrderRow = (order) => {
+                const customer =
+                    order.shippingAddress?.name || order.user?.name || order.guestInfo?.name || "N/A";
+                const itemCount = order.orderedProducts?.length || 0;
+                const status = order.orderStatus || "pending";
+                const date = order.createdAt
+                    ? new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                    })
+                    : "--";
+                const orderId = (order.orderId || order._id?.toString().slice(-8) || "").toString();
+
+                ensureSpace(26, () => {
+                    drawHeader(false);
+                    drawTableHeader();
+                });
+
+                const rowTop = y;
+
+                doc.fontSize(8).font("Helvetica-Bold").fillColor(COLORS.ink)
+                    .text(orderId.slice(-10), cols[0].x, rowTop, { width: cols[0].w });
+
+                doc.font("Helvetica").fillColor(COLORS.ink)
+                    .text(customer.length > 20 ? customer.slice(0, 18) + "…" : customer, cols[1].x, rowTop, {
+                        width: cols[1].w,
+                    });
+
+                doc.fillColor(COLORS.subink)
+                    .text(String(itemCount), cols[2].x, rowTop, { width: cols[2].w, align: "center" });
+
+                doc.font("Helvetica-Bold").fillColor(COLORS.ink)
+                    .text(money(order.finalAmount), cols[3].x, rowTop, { width: cols[3].w, align: "right" });
+
+                doc.font("Helvetica-Bold").fillColor(STATUS_COLOR[status] || COLORS.subink).fontSize(7.5)
+                    .text(status.charAt(0).toUpperCase() + status.slice(1), cols[4].x, rowTop + 0.5, {
+                        width: cols[4].w,
+                    });
+
+                doc.font("Helvetica").fillColor(COLORS.subink).fontSize(8)
+                    .text(date, cols[5].x, rowTop, { width: cols[5].w, align: "right" });
+
+                y = rowTop + 16;
+
+                // Line items — indented sub-table, quiet styling
+                if (order.orderedProducts?.length) {
+                    order.orderedProducts.forEach((p) => {
+                        ensureSpace(12, () => {
+                            drawHeader(false);
+                            drawTableHeader();
+                        });
+                        const lineTotal = (p.price || 0) * (p.quantity || 1);
+                        doc.fontSize(7.5).font("Helvetica").fillColor(COLORS.faint)
+                            .text(`${p.name}${p.size ? ` (${p.size})` : ""}`, cols[1].x, y, {
+                                width: cols[1].w + cols[2].w,
+                            });
+                        doc.text(`x${p.quantity || 1}`, cols[2].x, y, { width: cols[2].w, align: "center" });
+                        doc.text(money(lineTotal), cols[3].x, y, { width: cols[3].w, align: "right" });
+                        y += 11;
+                    });
+                    y += 3;
+                }
+
+                hr(COLORS.border);
+                y += 10;
+            };
+
+            // ---- Footer with page numbers ----
+            const drawFooters = () => {
+                const range = doc.bufferedPageRange();
+                for (let i = range.start; i < range.start + range.count; i++) {
+                    doc.switchToPage(i);
+                    doc.fontSize(7.5).font("Helvetica").fillColor(COLORS.faint)
+                        .text(
+                            `Page ${i - range.start + 1} of ${range.count}`,
+                            marginX,
+                            doc.page.height - 34,
+                            { width: pageWidth, align: "center" }
+                        );
+                }
+            };
+
+            // ---- Build document ----
+            drawHeader(true);
+            drawSummary();
 
             if (orders.length === 0) {
-                doc.fontSize(11).fillColor("#9ca3af").text("No orders found.", 40, y + 20);
+                doc.fontSize(10).font("Helvetica").fillColor(COLORS.faint)
+                    .text("No orders found.", marginX, y + 10);
             } else {
                 drawTableHeader();
-
-                orders.forEach((order, idx) => {
-                    if (y > 720) {
-                        doc.addPage();
-                        y = 40;
-                        drawTableHeader();
-                    }
-
-                    const bgColor = idx % 2 === 0 ? "#ffffff" : "#f9fafb";
-                    const rowH = 18;
-                    doc.roundedRect(40, y - 2, pageWidth, rowH + 4, 3).fillColor(bgColor).fill();
-
-                    const customer = order.shippingAddress?.name || order.user?.name || order.guestInfo?.name || "N/A";
-                    const items = order.orderedProducts?.length || 0;
-                    const total = order.finalAmount || 0;
-                    const status = order.orderStatus || "pending";
-                    const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString("en-IN") : "--";
-
-                    doc.fillColor("#1f2937").fontSize(7.5).font("Helvetica");
-                    doc.text((order.orderId || order._id?.slice(-8) || "").toString().slice(-10), 44, y, { width: 70 });
-                    doc.text(customer.length > 18 ? customer.slice(0, 16) + ".." : customer, 118, y, { width: 90 });
-                    doc.text(String(items), 212, y, { width: 50 });
-                    doc.text(`₹${total.toLocaleString("en-IN")}`, 266, y, { width: 60 });
-
-                    const statusColors = { pending: "#F59E0B", confirmed: "#3B82F6", processing: "#8B5CF6", delivered: "#10B981", cancelled: "#EF4444" };
-                    doc.fillColor(statusColors[status] || "#6b7280").font("Helvetica-Bold").text(status.charAt(0).toUpperCase() + status.slice(1), 330, y, { width: 60 });
-                    doc.fillColor("#6b7280").font("Helvetica").text(date, 394, y, { width: 82 });
-
-                    y += rowH + 6;
-
-                    // Render ordered products for this order
-                    if (order.orderedProducts && order.orderedProducts.length > 0) {
-                        doc.fontSize(6.5).font("Helvetica").fillColor("#9ca3af");
-                        const productLines = order.orderedProducts.map(p =>
-                            `${p.name} (${p.size}) x${p.quantity} - ₹${((p.price || 0) * (p.quantity || 1)).toLocaleString("en-IN")}`
-                        );
-                        productLines.forEach((line, li) => {
-                            if (y > 740) {
-                                doc.addPage();
-                                y = 40;
-                            }
-                            doc.fillColor("#9ca3af").text(`  ${line}`, 60, y, { width: pageWidth - 60 });
-                            y += 11;
-                        });
-                        y += 2;
-                    }
-                });
+                orders.forEach((order) => drawOrderRow(order));
             }
 
+            drawFooters();
             doc.end();
         });
     }

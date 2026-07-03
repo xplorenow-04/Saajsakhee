@@ -106,7 +106,7 @@ export default function ProductCard({ product, loading = false }) {
         if (err.name === 'AbortError') return;
       }
     }
-    
+
     try {
       await navigator.clipboard.writeText(url);
       toast.success("Link copied to clipboard!");
@@ -141,32 +141,41 @@ export default function ProductCard({ product, loading = false }) {
 
         {/* Quick Actions Overlay */}
         <div className="absolute inset-0 bg-black/60 backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-all duration-350 flex items-center justify-center gap-3">
-          <button
-            onClick={handleAddToCart}
-            disabled={adding || !defaultSize}
-            className="bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 p-3 rounded-full hover:from-gold-300 hover:to-gold-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-95"
-          >
-            <ShoppingBag size={18} strokeWidth={2.5} />
-          </button>
-          
-          <button
-            onClick={handleWishlistToggle}
-            className={`p-3 rounded-full transition-all duration-200 shadow-lg active:scale-95 border ${
-              inWishlist 
-                ? "bg-gold-500/20 border-gold-500 text-gold-400" 
-                : "bg-surface-800/80 backdrop-blur-sm border-surface-600 text-gold-400 hover:bg-surface-700"
-            }`}
-          >
-            <Heart size={18} className={inWishlist ? "fill-gold-400" : ""} />
-          </button>
 
-          <div className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
+          {
+            user?.role !== "admin" &&       // -------- Only Visisble to User not Admin ----------------
+
+            <>
+
+              <button
+                onClick={handleAddToCart}
+                disabled={adding || !defaultSize}
+                className="hidden md:block bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 p-3 rounded-full hover:from-gold-300 hover:to-gold-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-95"
+              >
+                <ShoppingBag size={18} strokeWidth={2.5} />
+              </button>
+
+              <button
+                onClick={handleWishlistToggle}
+                className={`hidden md:block p-3 rounded-full transition-all duration-200 shadow-lg active:scale-95 border ${inWishlist
+                  ? "bg-gold-500/20 border-gold-500 text-gold-400"
+                  : "bg-surface-800/80 backdrop-blur-sm border-surface-600 text-gold-400 hover:bg-surface-700"
+                  }`}
+              >
+                <Heart size={18} className={inWishlist ? "fill-gold-400" : ""} />
+              </button>
+
+
+            </>
+          }
+
+          <div className="hidden md:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
             <Eye size={18} />
           </div>
 
           <button
             onClick={handleShare}
-            className="bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer active:scale-95"
+            className="hidden md:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer active:scale-95"
             title="Share Product"
           >
             <Share2 size={18} />
@@ -175,9 +184,15 @@ export default function ProductCard({ product, loading = false }) {
 
         {/* Category Tag */}
         {displayCategory && (
-          <div className="absolute top-3 right-3 bg-surface-950/80 backdrop-blur-sm border border-gold-500/20 text-gold-400 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-widest">
-            {displayCategory}
-          </div>
+          <>
+            <div className="hidden sm:block absolute top-3 right-3 bg-surface-950/80 backdrop-blur-sm border border-gold-500/20 text-gold-400 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-widest">
+              {displayCategory}
+            </div>
+
+            <div className="block sm:hidden absolute bottom-3 right-3 bg-surface-950/80 backdrop-blur-sm border border-gold-500/20 text-gold-400 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-widest">
+              {displayCategory}
+            </div>
+          </>
         )}
       </div>
 
@@ -216,13 +231,12 @@ export default function ProductCard({ product, loading = false }) {
                     if (!outOfStock) setSelectedSize(sizeValue);
                   }}
                   disabled={outOfStock}
-                  className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-all ${
-                    isSelected
-                      ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950"
-                      : outOfStock
+                  className={`px-2.5 py-1 text-[11px] font-semibold rounded-md border transition-all ${isSelected
+                    ? "bg-gradient-to-r from-gold-200 to-gold-500 border-transparent text-neutral-950"
+                    : outOfStock
                       ? "bg-surface-800/50 border-surface-600 text-text-muted/20 line-through cursor-not-allowed"
                       : "bg-surface-950 border-surface-600 text-text-secondary hover:border-gold-500/40 hover:text-gold-400"
-                  }`}
+                    }`}
                 >
                   {sizeValue}
                 </button>
