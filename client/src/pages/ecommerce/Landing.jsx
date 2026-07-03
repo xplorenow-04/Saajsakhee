@@ -89,6 +89,11 @@ export default function Landing() {
       title: "Premium Quality",
       desc: "Handpicked collections",
     },
+    {
+      icon: Truck,
+      title: "Shipping Charges",
+      desc: "₹" + settings?.shippingCharge || "1000"
+    },
   ];
 
   // Rotating hero headlines — women's fashion / traditional-wear themed.

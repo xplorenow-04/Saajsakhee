@@ -6,7 +6,7 @@ const BASE_URL = `${import.meta.env.VITE_ENV === "production" ? import.meta.env.
 export function useShippingSettings() {
     const [settings, setSettings] = useState({
         freeShippingThreshold: 999,
-        shippingCharge: 99,
+        shippingCharge: `${100}`,
         processingDays: "3-5"
     });
     const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ export function useShippingSettings() {
                 if (data.success && data.data) {
                     setSettings({
                         freeShippingThreshold: data.data.freeShippingThreshold ?? 999,
-                        shippingCharge: data.data.shippingCharge ?? 99,
+                        shippingCharge: data.data.shippingCharge ?? "100",
                         processingDays: data.data.processingDays || "3-5"
                     });
                 }
