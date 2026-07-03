@@ -336,7 +336,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`lg:hidden transition-all duration-300 overflow-hidden ${mobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        className={`lg:hidden transition-all duration-300 overflow-y-auto ${mobileMenuOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
           }`}
       >
         <div className="bg-surface-800/95 backdrop-blur-xl border-t border-surface-600 px-4 py-4 space-y-4">
