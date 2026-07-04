@@ -632,8 +632,10 @@ export default function Landing() {
                     to="/categories"
                     className="sm:hidden flex items-start relative bottom-[-10%] justify-center aspect-[3/4] rounded-xl border border-dashed border-surface-700/50 hover:border-accent/30 transition-all duration-300 text-md font-semibold text-accent hover:text-gold-400 gap-1.5"
                   >
-                    <span>Show More</span>
-                    <ArrowRight size={16} />
+                    <div className="flex items-center">
+                      <span>Show More</span>
+                      <ArrowRight size={16} />
+                    </div>
                   </Link>
                 )}
               </div>
