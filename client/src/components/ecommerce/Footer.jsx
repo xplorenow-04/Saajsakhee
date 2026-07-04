@@ -31,7 +31,7 @@ const helpLinks = [
 const socialLinks = [
   { icon: Facebook, href: "#", label: "Facebook" },
   { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Instagram, href: "https://www.instagram.com/saajsakhee.official?igsh=ZGh1aGt3ZDUxbjhx", label: "Instagram" },
   { icon: Youtube, href: "#", label: "Youtube" },
 ];
 
@@ -75,19 +75,19 @@ export default function Footer() {
               piece tells a story of craftsmanship and elegance.
             </p>
             <div className="mt-5 space-y-2.5">
-              <a
+              {/* <a
                 href="mailto:hello@saajsakhee.com"
                 className="flex items-center gap-2.5 text-sm text-text-muted hover:text-accent transition-colors"
               >
                 <Mail size={14} />
                 hello@saajsakhee.com
-              </a>
+              </a> */}
               <a
-                href="tel:+1234567890"
+                href="#"
                 className="flex items-center gap-2.5 text-sm text-text-muted hover:text-accent transition-colors"
               >
                 <Phone size={14} />
-                +1 (234) 567-890
+                +91 9022565195
               </a>
               <div className="flex items-start gap-2.5 text-sm text-text-muted">
                 <MapPin size={14} className="mt-0.5 shrink-0" />
