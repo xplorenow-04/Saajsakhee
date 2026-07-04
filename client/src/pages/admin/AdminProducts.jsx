@@ -536,7 +536,9 @@ export default function AdminProducts() {
                     type="number"
                     step="0.01"
                     value={form.price}
-                    onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))}
+                    onChange={(e) => {
+                      setForm((p) => ({ ...p, price: e.target.value >= 0 ? e.target.value : 0 }))
+                    }}
                     className="w-full bg-surface-700 border border-surface-600 rounded-xl px-4 py-2.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-gold-500 focus:ring-1 focus:ring-gold-500/30 transition-all"
                     placeholder="0.00"
                   />
