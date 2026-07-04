@@ -70,7 +70,7 @@ function App() {
         <Route path='/shop' element={<ProductListing />} />
         <Route path='/shop/:slug' element={<ProductDetail />} />
         <Route path='/cart' element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-        <Route path='/categories' element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
+        <Route path='/categories' element={<CategoriesPage />} />
         <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/checkout' element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />

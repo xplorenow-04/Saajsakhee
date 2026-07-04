@@ -252,6 +252,10 @@ export default function Landing() {
           0%, 49% { opacity: 1; }
           50%, 100% { opacity: 0; }
         }
+        @keyframes logoFadeIn {
+          0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .typewriter-caret {
           display: inline-block;
           width: 3px;
@@ -299,9 +303,24 @@ export default function Landing() {
           transform-origin: center 15%;
           will-change: transform;
         }
+        .hero-logo-wrap {
+          animation: logoFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .hero-logo-plate {
+          background: radial-gradient(circle, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.25) 55%, rgba(10,10,10,0) 75%);
+          backdrop-filter: blur(2px);
+        }
+        .hero-logo-img {
+          filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.45)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+          transition: transform 0.4s ease, filter 0.4s ease;
+        }
+        .hero-logo-img:hover {
+          transform: scale(1.05);
+          filter: drop-shadow(0 6px 22px rgba(212, 175, 55, 0.6)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+        }
         @media (prefers-reduced-motion: reduce) {
           .hero-badge, .hero-heading, .hero-desc, .hero-cta,
-          .hero-sparkle, .hero-glow-float, .hero-bg-active {
+          .hero-sparkle, .hero-glow-float, .hero-bg-active, .hero-logo-wrap {
             animation: none !important;
           }
           .typewriter-caret {
@@ -310,6 +329,9 @@ export default function Landing() {
           }
           .hero-pulse .hero-heading-gradient {
             text-shadow: none !important;
+          }
+          .hero-logo-img:hover {
+            transform: none;
           }
         }
       `}</style>
@@ -370,7 +392,22 @@ export default function Landing() {
 
       <main>
         {/* Hero Section */}
+
         <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+          {/* Brand logo — fixed to the viewport on tablet/desktop (md+),
+              sized on a responsive scale so it never overpowers the hero
+              copy on smaller laptop screens but still reads clearly on
+              large monitors. A soft gold halo sits behind it so it lifts
+              off busy parts of the background photography. */}
+          <div className="hero-logo-wrap hidden md:flex md:fixed top-20 lg:top-24 xl:top-28 left-4 lg:left-8 z-30 items-center justify-center h-32 w-32 lg:h-40 lg:w-40 xl:h-48 xl:w-48">
+            <div className="hero-logo-plate absolute inset-0 rounded-full pointer-events-none" />
+            <div className="absolute inset-0 rounded-full bg-gold-400/15 blur-2xl pointer-events-none" />
+            <img
+              className="hero-logo-img relative h-[85%] w-[85%] object-contain"
+              src="/saajsakhee-logo.png"
+              alt="Saaj Sakhee"
+            />
+          </div>
           {/* Background Slideshow */}
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-r from-surface-900 via-surface-900/70 to-transparent z-10" />
@@ -399,13 +436,30 @@ export default function Landing() {
           <div className="hero-glow-float absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-0">
-            <div className={`max-w-2xl transition-transform duration-500 ${bgPulse ? "hero-pulse" : ""}`}>
-              <div className="hero-badge inline-flex items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
+            <div className={`relative max-w-2xl transition-transform duration-500 ${bgPulse ? "hero-pulse" : ""}`}>
+              <div className="hidden md:block hero-badge md:inline-flex md:items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
                 <Sparkles size={14} className="hero-sparkle text-gold-400" />
                 <span className="text-xs font-semibold text-gold-400 tracking-widest uppercase">
                   New Season Collection
                 </span>
               </div>
+
+              {/* Brand logo — mobile/small-tablet only (below md), sits
+                  inline above the headline instead of floating fixed so it
+                  never overlaps the copy on short viewports. */}
+              <div className="hero-logo-wrap flex md:hidden items-center justify-start mb-6 h-44 sm:h-44">
+                <div className="relative h-full aspect-square flex items-center justify-center">
+                  <div className="hero-logo-plate absolute inset-0 rounded-full pointer-events-none" />
+                  <div className="absolute inset-0 rounded-full bg-gold-400/15 blur-xl pointer-events-none" />
+                  <img
+                    className="hero-logo-img relative h-[100%] w-[100%] object-contain"
+                    src="/saajsakhee-logo.png"
+                    alt="Saaj Sakhee"
+                  />
+                </div>
+              </div>
+
+
 
               <h1 className="hero-heading text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-[1.1] tracking-tight">
                 {(() => {
