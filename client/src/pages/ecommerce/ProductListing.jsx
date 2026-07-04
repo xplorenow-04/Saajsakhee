@@ -51,6 +51,8 @@ export default function ProductListing() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
   const suggestTimer = useRef(null);
+  const [tempMinPrice, setTempMinPrice] = useState("");
+  const [tempMaxPrice, setTempMaxPrice] = useState("");
 
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
   const currentCategory = searchParams.get("category") || "";
@@ -109,6 +111,11 @@ export default function ProductListing() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    setTempMinPrice(currentMinPrice);
+    setTempMaxPrice(currentMaxPrice);
+  }, [currentMinPrice, currentMaxPrice]);
 
   useEffect(() => {
     setSearchInput(currentSearch);
@@ -197,12 +204,9 @@ export default function ProductListing() {
     updateParams({ search: searchInput.trim(), page: "1" });
   };
 
-  const handleMinPrice = (e) => {
-    currentMinPrice = e.target.value
-    setTimeout(() => {
-      updateParams({ minPrice: e.target.value })
-    }, 2000)
-  }
+  const applyPriceFilter = () => {
+    updateParams({ minPrice: tempMinPrice, maxPrice: tempMaxPrice });
+  };
 
   const FilterSidebar = () => (
     <div className="space-y-8 sticky top-10">
@@ -249,23 +253,29 @@ export default function ProductListing() {
         <h4 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-3">
           Price Range
         </h4>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 mb-3">
           <input
             type="number"
             placeholder="Min"
-            value={currentMinPrice}
-            onChange={(e) => updateParams({ minPrice: e.target.value })}
+            value={tempMinPrice}
+            onChange={(e) => setTempMinPrice(e.target.value)}
             className="w-full bg-surface-800 border border-surface-600 rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
           />
           <span className="text-text-muted text-sm">-</span>
           <input
             type="number"
             placeholder="Max"
-            value={currentMaxPrice}
-            onChange={(e) => updateParams({ maxPrice: e.target.value })}
+            value={tempMaxPrice}
+            onChange={(e) => setTempMaxPrice(e.target.value)}
             className="w-full bg-surface-800 border border-surface-600 rounded-lg px-3 py-2 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all"
           />
         </div>
+        <button
+          onClick={applyPriceFilter}
+          className="w-full bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold text-sm py-2 rounded-lg transition-all shadow-[0_4px_12px_rgba(212,175,55,0.2)] hover:opacity-95 active:scale-[0.98]"
+        >
+          Apply
+        </button>
       </div>
 
       {/* Size Filter */}
@@ -464,7 +474,7 @@ export default function ProductListing() {
             {/* Desktop Sidebar */}
             <aside className="hidden lg:block w-64 shrink-0">
               <div className="sticky top-28 bg-surface-800/50 border border-surface-700/50 rounded-2xl p-6">
-                <FilterSidebar />
+                {FilterSidebar()}
               </div>
             </aside>
 
@@ -571,12 +581,12 @@ export default function ProductListing() {
               </button>
             </div>
             <div className="p-5">
-              <FilterSidebar />
+              {FilterSidebar()}
             </div>
             <div className="sticky bottom-0 bg-surface-900 border-t border-surface-700 px-5 py-4">
               <button
                 onClick={() => {
-                  clearAllFilters();
+                  applyPriceFilter();
                   setMobileFiltersOpen(false);
                 }}
                 className="w-full bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-bold py-3 rounded-xl transition-all shadow-[0_4px_15px_rgba(212,175,55,0.3)] hover:opacity-95"

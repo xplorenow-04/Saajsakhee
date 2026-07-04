@@ -150,14 +150,14 @@ export default function ProductCard({ product, loading = false }) {
               <button
                 onClick={handleAddToCart}
                 disabled={adding || !defaultSize}
-                className="hidden md:block bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 p-3 rounded-full hover:from-gold-300 hover:to-gold-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-95"
+                className="hidden xl:block bg-gradient-to-r from-gold-200 to-gold-500 text-neutral-950 p-3 rounded-full hover:from-gold-300 hover:to-gold-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg active:scale-95"
               >
                 <ShoppingBag size={18} strokeWidth={2.5} />
               </button>
 
               <button
                 onClick={handleWishlistToggle}
-                className={`hidden md:block p-3 rounded-full transition-all duration-200 shadow-lg active:scale-95 border ${inWishlist
+                className={`hidden xl:block p-3 rounded-full transition-all duration-200 shadow-lg active:scale-95 border ${inWishlist
                   ? "bg-gold-500/20 border-gold-500 text-gold-400"
                   : "bg-surface-800/80 backdrop-blur-sm border-surface-600 text-gold-400 hover:bg-surface-700"
                   }`}
@@ -169,13 +169,13 @@ export default function ProductCard({ product, loading = false }) {
             </>
           }
 
-          <div className="hidden md:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
+          <div className="hidden xl:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer">
             <Eye size={18} />
           </div>
 
           <button
             onClick={handleShare}
-            className="hidden md:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer active:scale-95"
+            className="hidden xl:block bg-surface-800/80 backdrop-blur-sm border border-surface-600 text-gold-400 p-3 rounded-full hover:bg-surface-700 transition-all duration-200 shadow-lg cursor-pointer active:scale-95"
             title="Share Product"
           >
             <Share2 size={18} />
