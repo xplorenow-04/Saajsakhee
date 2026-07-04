@@ -252,6 +252,10 @@ export default function Landing() {
           0%, 49% { opacity: 1; }
           50%, 100% { opacity: 0; }
         }
+        @keyframes logoFadeIn {
+          0% { opacity: 0; transform: translateY(-8px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .typewriter-caret {
           display: inline-block;
           width: 3px;
@@ -299,9 +303,24 @@ export default function Landing() {
           transform-origin: center 15%;
           will-change: transform;
         }
+        .hero-logo-wrap {
+          animation: logoFadeIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .hero-logo-plate {
+          background: radial-gradient(circle, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.25) 55%, rgba(10,10,10,0) 75%);
+          backdrop-filter: blur(2px);
+        }
+        .hero-logo-img {
+          filter: drop-shadow(0 4px 16px rgba(212, 175, 55, 0.45)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+          transition: transform 0.4s ease, filter 0.4s ease;
+        }
+        .hero-logo-img:hover {
+          transform: scale(1.05);
+          filter: drop-shadow(0 6px 22px rgba(212, 175, 55, 0.6)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+        }
         @media (prefers-reduced-motion: reduce) {
           .hero-badge, .hero-heading, .hero-desc, .hero-cta,
-          .hero-sparkle, .hero-glow-float, .hero-bg-active {
+          .hero-sparkle, .hero-glow-float, .hero-bg-active, .hero-logo-wrap {
             animation: none !important;
           }
           .typewriter-caret {
@@ -310,6 +329,9 @@ export default function Landing() {
           }
           .hero-pulse .hero-heading-gradient {
             text-shadow: none !important;
+          }
+          .hero-logo-img:hover {
+            transform: none;
           }
         }
       `}</style>
@@ -370,7 +392,9 @@ export default function Landing() {
 
       <main>
         {/* Hero Section */}
+
         <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+
           {/* Background Slideshow */}
           <div className="absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-r from-surface-900 via-surface-900/70 to-transparent z-10" />
@@ -399,58 +423,76 @@ export default function Landing() {
           <div className="hero-glow-float absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[120px] pointer-events-none" />
 
           <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-0">
-            <div className={`max-w-2xl transition-transform duration-500 ${bgPulse ? "hero-pulse" : ""}`}>
-              <div className="hero-badge inline-flex items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
-                <Sparkles size={14} className="hero-sparkle text-gold-400" />
-                <span className="text-xs font-semibold text-gold-400 tracking-widest uppercase">
-                  New Season Collection
-                </span>
+            <div className={`relative w-full flex flex-col md:flex-row items-start md:items-center gap-0 md:gap-2 lg:gap-4 transition-transform duration-500 ${bgPulse ? "hero-pulse" : ""}`}>
+
+              {/* Brand logo — Massively scaled to fit the entire left section */}
+              <div className="hero-logo-wrap flex-1 flex justify-start md:justify-end items-center w-full -ml-4 sm:-ml-6 md:ml-0 transition-all duration-700 ease-out z-30">
+                <div className="relative flex items-center justify-center w-full max-w-[260px] sm:max-w-[320px] md:max-w-[380px] lg:max-w-[480px] xl:max-w-[560px] aspect-square">
+                  <div className="absolute inset-0 rounded-full bg-gold-500/10 blur-[48px] pointer-events-none opacity-80" />
+                  <img
+                    className="relative h-full w-full object-contain filter drop-shadow-[0_12px_40px_rgba(0,0,0,0.8)] drop-shadow-[0_4px_16px_rgba(212,175,55,0.4)] opacity-95 transition-transform duration-700 hover:scale-105 hover:opacity-100 hover:drop-shadow-[0_20px_56px_rgba(212,175,55,0.55)]"
+                    src="/saajsakhee-logo.png"
+                    alt="Saaj Sakhee"
+                  />
+                </div>
               </div>
 
-              <h1 className="hero-heading text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-[1.1] tracking-tight">
-                {(() => {
-                  const current = heroHeadlines[headlineIndex];
-                  const line1WithSpace = `${current.line1} `;
-                  const visible = `${current.line1} ${current.line2}`.slice(0, typedLength);
-                  const line1Visible = visible.slice(0, Math.min(typedLength, line1WithSpace.length));
-                  const line2Visible = typedLength > line1WithSpace.length
-                    ? visible.slice(line1WithSpace.length)
-                    : "";
-                  return (
-                    <>
-                      {line1Visible}
-                      {line2Visible && (
-                        <span className="hero-heading-gradient font-luxury italic text-gradient-gold">
-                          {line2Visible}
-                        </span>
-                      )}
-                      <span className="typewriter-caret text-gold-400" style={{ height: "0.85em" }}>&nbsp;</span>
-                    </>
-                  );
-                })()}
-              </h1>
+              {/* Hero Copy Container */}
+              <div className="flex-1 max-w-2xl">
+                <div className="hidden md:block hero-badge md:inline-flex md:items-center gap-2 bg-gold-500/10 border border-gold-500/20 rounded-full px-4 py-1.5 mb-6">
+                  <Sparkles size={14} className="hero-sparkle text-gold-400" />
+                  <span className="text-xs font-semibold text-gold-400 tracking-widest uppercase">
+                    New Season Collection
+                  </span>
+                </div>
 
-              <p className="hero-desc mt-6 text-base sm:text-lg text-text-secondary max-w-lg leading-relaxed">
-                Discover thoughtfully crafted women’s fashion that blends timeless tradition with modern elegance — designed for confidence, beauty, and every special moment.
-              </p>
 
-              <div className="hero-cta flex flex-wrap gap-4 mt-8">
-                <Link
-                  to="/shop"
-                  className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.45)] hover:-translate-y-0.5 active:scale-[0.98]"
-                >
-                  Shop Now
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </Link>
-                <Link
-                  to="/shop"
-                  className="inline-flex items-center gap-2 border border-gold-500/30 hover:border-gold-500/60 text-gold-400 hover:bg-gold-500/5 font-medium px-8 py-3.5 rounded-xl transition-all duration-300"
-                >
-                  View Collection
-                </Link>
+
+                <h1 className="hero-heading text-4xl sm:text-5xl lg:text-7xl font-bold text-text-primary leading-[1.1] tracking-tight">
+                  {(() => {
+                    const current = heroHeadlines[headlineIndex];
+                    const line1WithSpace = `${current.line1} `;
+                    const visible = `${current.line1} ${current.line2}`.slice(0, typedLength);
+                    const line1Visible = visible.slice(0, Math.min(typedLength, line1WithSpace.length));
+                    const line2Visible = typedLength > line1WithSpace.length
+                      ? visible.slice(line1WithSpace.length)
+                      : "";
+                    return (
+                      <>
+                        {line1Visible}
+                        {line2Visible && (
+                          <span className="hero-heading-gradient font-luxury italic text-gradient-gold">
+                            {line2Visible}
+                          </span>
+                        )}
+                        <span className="typewriter-caret text-gold-400" style={{ height: "0.85em" }}>&nbsp;</span>
+                      </>
+                    );
+                  })()}
+                </h1>
+
+                <p className="hero-desc mt-6 text-base sm:text-lg text-text-secondary max-w-lg leading-relaxed">
+                  Discover thoughtfully crafted women’s fashion that blends timeless tradition with modern elegance — designed for confidence, beauty, and every special moment.
+                </p>
+
+                <div className="hero-cta flex flex-wrap gap-4 mt-8">
+                  <Link
+                    to="/shop"
+                    className="group relative inline-flex items-center gap-2 bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold px-8 py-3.5 rounded-xl transition-all duration-300 shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_4px_25px_rgba(212,175,55,0.45)] hover:-translate-y-0.5 active:scale-[0.98]"
+                  >
+                    Shop Now
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </Link>
+                  <Link
+                    to="/shop"
+                    className="inline-flex items-center gap-2 border border-gold-500/30 hover:border-gold-500/60 text-gold-400 hover:bg-gold-500/5 font-medium px-8 py-3.5 rounded-xl transition-all duration-300"
+                  >
+                    View Collection
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -590,8 +632,10 @@ export default function Landing() {
                     to="/categories"
                     className="sm:hidden flex items-start relative bottom-[-10%] justify-center aspect-[3/4] rounded-xl border border-dashed border-surface-700/50 hover:border-accent/30 transition-all duration-300 text-md font-semibold text-accent hover:text-gold-400 gap-1.5"
                   >
-                    <span>Show More</span>
-                    <ArrowRight size={16} />
+                    <div className="flex items-center">
+                      <span>Show More</span>
+                      <ArrowRight size={16} />
+                    </div>
                   </Link>
                 )}
               </div>

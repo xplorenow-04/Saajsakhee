@@ -18,7 +18,7 @@ import { productApi } from "../../api/product.api";
 const companyLinks = [
   { name: "About Us", path: "/" },
   { name: "Shop", path: "/shop" },
-  { name: "Orders", path: "/orders" },
+  // { name: "Orders", path: "/orders" },
 ];
 
 const helpLinks = [
@@ -31,7 +31,7 @@ const helpLinks = [
 const socialLinks = [
   { icon: Facebook, href: "#", label: "Facebook" },
   { icon: Twitter, href: "#", label: "Twitter" },
-  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Instagram, href: "https://www.instagram.com/saajsakhee.official?igsh=ZGh1aGt3ZDUxbjhx", label: "Instagram" },
   { icon: Youtube, href: "#", label: "Youtube" },
 ];
 
@@ -57,7 +57,8 @@ export default function Footer() {
     <footer className="bg-surface-900 border-t border-surface-700/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Columns */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 py-14 lg:py-16">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 py-14 lg:py-16"> */}
+        <div className="flex gap-10 py-14 lg:py-16">
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2.5 group">
@@ -75,19 +76,19 @@ export default function Footer() {
               piece tells a story of craftsmanship and elegance.
             </p>
             <div className="mt-5 space-y-2.5">
-              <a
+              {/* <a
                 href="mailto:hello@saajsakhee.com"
                 className="flex items-center gap-2.5 text-sm text-text-muted hover:text-accent transition-colors"
               >
                 <Mail size={14} />
                 hello@saajsakhee.com
-              </a>
+              </a> */}
               <a
-                href="tel:+1234567890"
+                href="tel:+919022565195"
                 className="flex items-center gap-2.5 text-sm text-text-muted hover:text-accent transition-colors"
               >
                 <Phone size={14} />
-                +1 (234) 567-890
+                +91 9022565195
               </a>
               <div className="flex items-start gap-2.5 text-sm text-text-muted">
                 <MapPin size={14} className="mt-0.5 shrink-0" />
@@ -97,7 +98,7 @@ export default function Footer() {
           </div>
 
           {/* Company Links */}
-          <div>
+          {/* <div>
             <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
               Company
             </h3>
@@ -113,10 +114,10 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Help Links */}
-          <div>
+          {/* <div>
             <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
               Help
             </h3>
@@ -132,10 +133,10 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Shop Categories */}
-          <div>
+          {/* <div>
             <h3 className="text-sm font-semibold text-text-primary uppercase tracking-wider mb-4">
               Shop
             </h3>
@@ -151,7 +152,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
 
           {/* Newsletter & Social */}
           <div className="sm:col-span-2 lg:col-span-1">
@@ -165,6 +166,7 @@ export default function Footer() {
                   <a
                     key={social.label}
                     href={social.href}
+                    target="_blank"
                     aria-label={social.label}
                     className="w-9 h-9 flex items-center justify-center rounded-full bg-surface-800 text-text-muted border border-surface-600/60 hover:border-accent hover:text-accent transition-all duration-300"
                   >
