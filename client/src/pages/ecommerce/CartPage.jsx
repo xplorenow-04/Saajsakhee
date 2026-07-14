@@ -113,7 +113,7 @@ export default function CartPage() {
       const itemPrice = item.price || product.price || 0;
       const discount = product.discount || 0;
       const discPrice = discount > 0 ? itemPrice - (itemPrice * discount) / 100 : itemPrice;
-      
+
       itemsMessage += `${idx + 1}. *${product.name}* (Size: ${item.size || "N/A"}, Qty: ${item.quantity}) - ${formatPrice(discPrice * item.quantity)}\n`;
     });
 
@@ -123,7 +123,7 @@ ${itemsMessage}
 *Subtotal*: ${formatPrice(subtotal)}
 ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deliveryCharge > 0 ? `*Delivery*: ${formatPrice(deliveryCharge)}\n` : "*Delivery*: Free\n"}*Total*: ${formatPrice(total)}`;
 
-    const whatsappUrl = `https://wa.me/919022565195?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/919322586764?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -214,16 +214,15 @@ ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deli
                   return (
                     <div
                       key={item._id}
-                      className={`relative bg-surface-800 border border-surface-600/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:border-gold-500/20 shadow-[0_4px_20px_rgba(0,0,0,0.5)] ${
-                        isRemoving
-                          ? "opacity-50 scale-[0.97] pointer-events-none"
-                          : ""
-                      }`}
+                      className={`relative bg-surface-800 border border-surface-600/30 rounded-2xl p-4 sm:p-5 transition-all duration-300 hover:border-gold-500/20 shadow-[0_4px_20px_rgba(0,0,0,0.5)] ${isRemoving
+                        ? "opacity-50 scale-[0.97] pointer-events-none"
+                        : ""
+                        }`}
                     >
                       <div className="flex gap-4 sm:gap-5">
                         {/* Image */}
                         <Link
-                                to={`/shop/${product.slug || product._id}`}
+                          to={`/shop/${product.slug || product._id}`}
                           className="shrink-0"
                         >
                           <div className="w-20 h-24 sm:w-24 sm:h-28 rounded-xl overflow-hidden bg-surface-950 border border-surface-600/40">
@@ -243,7 +242,7 @@ ${totalDiscount > 0 ? `*Discount*: -${formatPrice(totalDiscount)}\n` : ""}${deli
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
                               <Link
-              to={`/shop/${product.slug || product._id}`}
+                                to={`/shop/${product.slug || product._id}`}
                                 className="text-sm sm:text-base font-medium text-text-primary hover:text-accent transition-colors line-clamp-1"
                               >
                                 {product.name}
