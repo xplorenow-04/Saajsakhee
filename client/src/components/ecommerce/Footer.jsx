@@ -188,9 +188,9 @@ export default function Footer() {
             <span className="text-xs text-text-muted">
               Privacy Policy
             </span>
-            <span className="text-xs text-text-muted">
-              Terms of Service
-            </span>
+            <Link to="/terms-and-conditions" className="text-xs text-text-muted hover:text-accent transition-colors">
+              Terms & Conditions
+            </Link>
             <div className="flex items-center gap-1 text-xs text-text-muted">
               <span>Made with</span>
               <Heart size={12} className="text-danger" />

@@ -19,6 +19,7 @@ import CheckoutPage from './pages/ecommerce/CheckoutPage.jsx'
 import OrdersPage from './pages/ecommerce/OrdersPage.jsx'
 import ProfilePage from './pages/ecommerce/ProfilePage.jsx'
 import Wishlist from './pages/ecommerce/Wishlist.jsx'
+import TermsAndConditions from './pages/ecommerce/TermsAndConditions.jsx'
 
 import AdminLayout from './components/admin/AdminLayout.jsx'
 import AdminDashboard from './pages/admin/AdminDashboard.jsx'
@@ -74,6 +75,7 @@ function App() {
         <Route path='/wishlist' element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
         <Route path='/checkout' element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
+        <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
         {/* <Route path='/profile' element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} /> */}
 
         <Route path='/login' element={<ProtectedRouteAuth><Login /></ProtectedRouteAuth>} />

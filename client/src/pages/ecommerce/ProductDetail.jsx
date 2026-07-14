@@ -487,8 +487,8 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 pt-2">
                 {[
-                  { icon: Truck, text: "Free delivery" },
-                  { icon: RefreshCw, text: "Easy returns" },
+                  { icon: Truck, text: "Best Service" },
+                  { icon: RefreshCw, text: "Easy Exchanges" },
                   { icon: ShieldCheck, text: "Secure" },
                 ].map((badge) => {
                   const BadgeIcon = badge.icon;
