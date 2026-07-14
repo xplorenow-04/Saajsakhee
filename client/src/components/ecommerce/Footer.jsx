@@ -90,10 +90,10 @@ export default function Footer() {
                 <Phone size={14} />
                 +91 9322586764
               </a>
-              <div className="flex items-start gap-2.5 text-sm text-text-muted">
+              {/* <div className="flex items-start gap-2.5 text-sm text-text-muted">
                 <MapPin size={14} className="mt-0.5 shrink-0" />
                 <span>123 Fashion Street, Design District, NY 10001</span>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -185,12 +185,12 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} SAAJSAKHEE. All rights reserved.
           </p>
           <div className="flex items-center gap-5">
-            <span className="text-xs text-text-muted">
+            <Link to="/privacy-policy" className="text-xs text-text-muted hover:text-accent transition-colors">
               Privacy Policy
-            </span>
-            <span className="text-xs text-text-muted">
-              Terms of Service
-            </span>
+            </Link>
+            <Link to="/terms-and-conditions" className="text-xs text-text-muted hover:text-accent transition-colors">
+              Terms & Conditions
+            </Link>
             <div className="flex items-center gap-1 text-xs text-text-muted">
               <span>Made with</span>
               <Heart size={12} className="text-danger" />

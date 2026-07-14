@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/apiUtils.js";
 import { orderService } from "../services/order.service.js";
 import { logger } from "../utils/logger.js";
 
-const WHATSAPP_NUMBER = process.env.WHATSAPP_NO || "9022565195";
+const WHATSAPP_NUMBER = process.env.WHATSAPP_NO || "9322586764";
 
 function generateWhatsAppMessage(order) {
     let message = "*New Order Placed!*";

@@ -255,7 +255,7 @@ export default function ProductDetail() {
 *Quantity*: ${quantity}
 *Product Link*: ${productLink}`;
 
-    const whatsappUrl = `https://wa.me/919022565195?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `https://wa.me/919322586764?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
 
@@ -487,8 +487,8 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 pt-2">
                 {[
-                  { icon: Truck, text: "Free delivery" },
-                  { icon: RefreshCw, text: "Easy returns" },
+                  { icon: Truck, text: "Best Service" },
+                  { icon: RefreshCw, text: "Easy Exchanges" },
                   { icon: ShieldCheck, text: "Secure" },
                 ].map((badge) => {
                   const BadgeIcon = badge.icon;
