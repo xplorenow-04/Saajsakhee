@@ -38,5 +38,9 @@ export const useWishlistStore = create((set, get) => ({
         return wishlist.items.some(item => 
             (item.product?._id || item.product) === productId
         );
+    },
+
+    clearWishlist : () =>{
+        set({wishlist:null})
     }
 }));

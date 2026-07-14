@@ -5,6 +5,7 @@ import { userAuthStore } from "../store/userStore";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useEcommerceStore } from "../store/useEcommerceStore";
+import { useWishlistStore } from "../store/useWishlistStore";
 
 export function useAuth() {
     const [loading, setLoading] = useState(false);
@@ -12,6 +13,8 @@ export function useAuth() {
     const setUserStore = userAuthStore((s) => s.setUser);
     const logoutStore = userAuthStore((s) => s.logout);
     const { cartCount, fetchCart ,clearCart,resetCartCount} = useEcommerceStore();
+  const { wishlist, fetchWishlist,clearWishlist } = useWishlistStore();
+
     
 
     const login = useCallback(async (email, password) => {
@@ -63,6 +66,7 @@ export function useAuth() {
         authData.setIsLoggedIn(false);
         logoutStore();
         resetCartCount();
+        clearWishlist();
         toast.success("Logged out successfully");
         setLoading(false);
     }, [authData, logoutStore]);
