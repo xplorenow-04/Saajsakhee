@@ -272,7 +272,7 @@ export default function ProductListing() {
         </div>
         <button
           onClick={applyPriceFilter}
-          className="w-full bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold text-sm py-2 rounded-lg transition-all shadow-[0_4px_12px_rgba(212,175,55,0.2)] hover:opacity-95 active:scale-[0.98]"
+          className="hidden md:block w-full bg-gradient-to-r from-gold-200 via-gold-500 to-gold-600 text-neutral-950 font-semibold text-sm py-2 rounded-lg transition-all shadow-[0_4px_12px_rgba(212,175,55,0.2)] hover:opacity-95 active:scale-[0.98]"
         >
           Apply
         </button>
