@@ -4,12 +4,15 @@ import { authContext } from "../context/AuthProvider";
 import { userAuthStore } from "../store/userStore";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useEcommerceStore } from "../store/useEcommerceStore";
 
 export function useAuth() {
     const [loading, setLoading] = useState(false);
     const authData = useContext(authContext);
     const setUserStore = userAuthStore((s) => s.setUser);
     const logoutStore = userAuthStore((s) => s.logout);
+    const { cartCount, fetchCart ,clearCart,resetCartCount} = useEcommerceStore();
+    
 
     const login = useCallback(async (email, password) => {
         setLoading(true);
@@ -59,6 +62,7 @@ export function useAuth() {
         authData.setUser(null);
         authData.setIsLoggedIn(false);
         logoutStore();
+        resetCartCount();
         toast.success("Logged out successfully");
         setLoading(false);
     }, [authData, logoutStore]);

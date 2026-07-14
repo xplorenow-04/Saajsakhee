@@ -51,5 +51,9 @@ export const useEcommerceStore = create((set, get) => ({
             set({ cart: { items: [] }, cartCount: 0 });
         }
         return res;
+    },
+
+    resetCartCount : () =>{
+        set({cartCount:0})
     }
 }));
